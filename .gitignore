@@ -1,0 +1,7 @@
+.godot/
+build/
+*.log
+.DS_Store
+# credentials / local secrets
+*.key
+.env
