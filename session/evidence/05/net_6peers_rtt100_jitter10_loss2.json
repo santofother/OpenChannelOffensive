@@ -1,0 +1,113 @@
+{
+  "build": "0.1.0-p2+81add1d",
+  "clients": {
+    "43489240": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 7248.27081129465,
+      "rtt_mean_ms": 123.954723299467,
+      "rtt_p95_ms": 138.916000366211,
+      "sim_dropped": 25,
+      "snaps": 704,
+      "stale_events": 0,
+      "stale_snaps": 1,
+      "up_Bps": 6391.37982477554
+    },
+    "116488626": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 6661.93406345264,
+      "rtt_mean_ms": 123.931261678842,
+      "rtt_p95_ms": 146.274993896484,
+      "sim_dropped": 40,
+      "snaps": 1362,
+      "stale_events": 4,
+      "stale_snaps": 2,
+      "up_Bps": 6464.64660720334
+    },
+    "668225234": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 6722.1759683906,
+      "rtt_mean_ms": 123.046722881611,
+      "rtt_p95_ms": 140.005996704102,
+      "sim_dropped": 28,
+      "snaps": 1388,
+      "stale_events": 0,
+      "stale_snaps": 3,
+      "up_Bps": 6421.88668595216
+    },
+    "1739419974": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 6438.79796839729,
+      "rtt_mean_ms": 125.104201409125,
+      "rtt_p95_ms": 144.526000976562,
+      "sim_dropped": 34,
+      "snaps": 1319,
+      "stale_events": 0,
+      "stale_snaps": 0,
+      "up_Bps": 6408.43679458239
+    }
+  },
+  "conditions": {
+    "sim_jitter_ms": 10.0,
+    "sim_latency_ms_one_way_each_side": 50.0,
+    "sim_loss": 0.02,
+    "transport": "ENet localhost, headless, one machine"
+  },
+  "date": "2026-11-16T09:36:27",
+  "failures": 0,
+  "host": {
+    "budget_drops": 0,
+    "cmds": 23444,
+    "down_Bps": 27931.9333123967,
+    "dup_cmds": 54995,
+    "rewind_ticks_max": 12.0,
+    "rewind_ticks_mean": 9.33333333333333,
+    "secs": 73.237,
+    "sim_us_max": 6651.0,
+    "sim_us_mean": 526.052320291174,
+    "sim_us_p95": 1053.0,
+    "sim_us_p99": 2877.0,
+    "stale_round_cmds": 339,
+    "starved_slot_ticks": 4847,
+    "ticks": 4396,
+    "up_Bps": 28818.0018296763
+  },
+  "players": 5,
+  "results": {
+    "moving_hits_lagcomp_off": 3,
+    "moving_hits_lagcomp_on": 12,
+    "node_counts_per_reset": [
+      {
+        "1": 545,
+        "43489240": 525,
+        "116488626": 525,
+        "668225234": 525,
+        "1739419974": 525,
+        "1888289920": 525
+      },
+      {
+        "1": 545,
+        "43489240": 525,
+        "116488626": 525,
+        "668225234": 525,
+        "1739419974": 525,
+        "1888289920": 525
+      },
+      {
+        "1": 545,
+        "43489240": 525,
+        "116488626": 525,
+        "668225234": 525,
+        "1739419974": 525,
+        "1888289920": 525
+      }
+    ]
+  }
+}

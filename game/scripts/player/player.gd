@@ -1,7 +1,8 @@
 class_name Player
 extends CharacterBody3D
-## First-person walk/crouch controller. Offline for now; Session M2 adds host authority/prediction.
-## Origin is at the feet. Esc releases the mouse; a click recaptures it.
+## First-person walk/crouch controller. Origin is at the feet. Esc releases the mouse; a click recaptures it.
+## Movement is a pure step: simulate(NetCmd, delta). Offline it runs every physics tick from make_cmd();
+## in a session NetMatch drives it (net_driven) on the host (authority) and on the owner (prediction/replay).
 
 signal mouse_capture_changed(captured: bool)
 signal reset_requested
@@ -20,6 +21,7 @@ var crouched := false ## intent/state: true while crouching or forced down by a 
 var height := 1.8
 var input_enabled := true
 var spawn_transform := Transform3D.IDENTITY
+var net_driven := false ## NetMatch calls simulate(); _physics_process does nothing
 
 ## Headless tests drive the player through these instead of the keyboard.
 var scripted := false
@@ -118,19 +120,41 @@ func can_stand() -> bool:
 
 
 func _physics_process(delta: float) -> void:
+	if net_driven:
+		return
 	if global_position.y < -20.0:
 		reset()
-	var move := Vector2.ZERO
-	var want_crouch := false
-	var want_sprint := false
+	simulate(make_cmd(), delta)
+
+
+func pitch() -> float:
+	return _pitch
+
+
+## Movement/look intent for this tick from the keyboard or the scripted fields. Buttons are filled by Loadout.
+func make_cmd() -> NetCmd:
+	var c := NetCmd.new()
+	c.yaw = rotation.y
+	c.pitch = _pitch
 	if scripted:
-		move = script_move
-		want_crouch = script_crouch
-		want_sprint = script_sprint
+		c.move = script_move
+		c.crouch = script_crouch
+		c.sprint = script_sprint
 	elif input_enabled and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		move = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
-		want_crouch = Input.is_action_pressed("crouch")
-		want_sprint = Input.is_action_pressed("sprint")
+		c.move = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+		c.crouch = Input.is_action_pressed("crouch")
+		c.sprint = Input.is_action_pressed("sprint")
+	return c
+
+
+## One deterministic movement step. Same code offline, on the host and in client replay.
+func simulate(cmd: NetCmd, delta: float) -> void:
+	rotation = Vector3(0.0, cmd.yaw, 0.0)
+	_pitch = clampf(cmd.pitch, -deg_to_rad(tuning.pitch_limit_deg), deg_to_rad(tuning.pitch_limit_deg))
+	_head.rotation.x = _pitch
+	var move := cmd.move
+	var want_crouch := cmd.crouch
+	var want_sprint := cmd.sprint
 
 	# Crouch: release only when the standing capsule fits; otherwise stay down.
 	if want_crouch:
@@ -163,6 +187,19 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y -= tuning.gravity * delta
 	move_and_slide()
+
+
+## Movement state for prediction/reconciliation.
+func get_move_state() -> Dictionary:
+	return {"pos": global_position, "vel": velocity, "crouched": crouched, "height": height}
+
+
+func set_move_state(pos: Vector3, vel: Vector3, is_crouched: bool, h: float) -> void:
+	global_position = pos
+	velocity = vel
+	crouched = is_crouched
+	height = h
+	_apply_height()
 
 
 func _apply_height() -> void:

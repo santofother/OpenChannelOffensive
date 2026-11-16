@@ -12,6 +12,8 @@ signal state_changed(module: WallModule)
 
 const OPENING_W := 1.2
 const OPENING_H := 2.1
+## Rifle damage multiplier through an intact ordinary panel (bounded by Ballistics thickness/surface limits).
+const ORDINARY_PEN_MULT := 0.5
 
 var wall_id := ""
 var material := Mat.ORDINARY
@@ -42,6 +44,7 @@ func setup(id: String, lo: Vector3, hi: Vector3, mat: int, surface: Material, ca
 	position = (lo + hi) * 0.5
 	collision_layer = 1
 	collision_mask = 0
+	set_meta("pen_mult", ORDINARY_PEN_MULT if mat == Mat.ORDINARY else 0.0)
 	_rebuild()
 
 
@@ -76,6 +79,18 @@ func breach(kind: int) -> bool:
 		return false
 	state = State.BREACHED
 	revision += 1
+	_rebuild()
+	state_changed.emit(self)
+	return true
+
+
+## Replicated state from the host. Ignores stale or duplicate revisions (round changes go through reset()).
+func apply_remote(new_state: int, new_revision: int) -> bool:
+	if new_revision <= revision:
+		return false
+	state = new_state
+	revision = new_revision
+	charge = null
 	_rebuild()
 	state_changed.emit(self)
 	return true

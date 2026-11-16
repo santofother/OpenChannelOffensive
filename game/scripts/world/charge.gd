@@ -1,10 +1,15 @@
 class_name Charge
 extends Node3D
 ## Placed breach charge: visible countdown label, beeps (faster at the end), then breaches its module.
+## Only an authoritative charge (offline/host) breaches; a replicated client copy just counts down and waits
+## for the host's wall event (NetMatch frees it).
 
 signal detonated(charge: Charge)
 
 var module: WallModule
+var charge_id := 0
+var owner_id := 1
+var authoritative := true
 var kind := WallModule.Kind.ORDINARY
 var normal := Vector3.RIGHT
 var left := 3.0
@@ -14,6 +19,7 @@ var _beep_gap := 0.0
 
 
 func setup(m: WallModule, k: int, fuse: float, pos: Vector3, n: Vector3) -> void:
+	add_to_group("charges")
 	module = m
 	kind = k
 	normal = n
@@ -57,6 +63,8 @@ func _process(delta: float) -> void:
 	_update_label()
 	if left <= 0.0:
 		set_process(false)
+		if not authoritative:
+			return
 		module.charge = null
 		module.breach(kind)
 		detonated.emit(self)

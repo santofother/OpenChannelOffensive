@@ -17,7 +17,7 @@ const DEFAULT_PORT := 24690
 const MAX_PLAYERS := 6 ## 3v3
 const GAME_VERSION := "0.1.0"
 ## Bump when the wire protocol changes incompatibly; part of build_id so mismatched builds are refused.
-const PROTOCOL := 1
+const PROTOCOL := 2
 const REGISTER_TIMEOUT := 15.0
 
 ## "<GAME_VERSION>-p<PROTOCOL>+<commit>". Host and clients must match exactly; `--build-id=X` overrides (tests).
@@ -26,6 +26,7 @@ var mode: Mode = Mode.OFFLINE
 var local_name := "Player"
 var player_names: Dictionary = {} ## peer_id -> name (host-authoritative)
 var args: Dictionary = {} ## user args after `--`, e.g. `--host-enet --name=Bob`
+var last_end_reason := "" ## shown by the menu after a session ends (e.g. "Host left the game")
 
 var _register_wait := 0.0
 
@@ -121,6 +122,7 @@ func leave(reason: String = "Left game") -> void:
 	mode = Mode.OFFLINE
 	_register_wait = 0.0
 	player_names.clear()
+	last_end_reason = reason
 	print("[Net] Session ended: ", reason)
 	status_changed.emit(reason)
 	session_ended.emit(reason)

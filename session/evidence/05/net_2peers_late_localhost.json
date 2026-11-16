@@ -1,0 +1,65 @@
+{
+  "build": "0.1.0-p2+81add1d",
+  "clients": {
+    "1060170765": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 3386.52882488375,
+      "rtt_mean_ms": 7.52581600284576,
+      "rtt_p95_ms": 14.3219995498657,
+      "sim_dropped": 0,
+      "snaps": 1303,
+      "stale_events": 4,
+      "stale_snaps": 0,
+      "up_Bps": 6460.68650023325
+    }
+  },
+  "conditions": {
+    "sim_jitter_ms": 0.0,
+    "sim_latency_ms_one_way_each_side": 0.0,
+    "sim_loss": 0.0,
+    "transport": "ENet localhost, headless, one machine"
+  },
+  "date": "2026-11-16T09:35:03",
+  "failures": 0,
+  "host": {
+    "budget_drops": 0,
+    "cmds": 10038,
+    "down_Bps": 9297.357246049,
+    "dup_cmds": 17595,
+    "rewind_ticks_max": 9.0,
+    "rewind_ticks_mean": 6.0,
+    "secs": 68.527,
+    "sim_us_max": 5624.0,
+    "sim_us_mean": 366.678823243375,
+    "sim_us_p95": 837.0,
+    "sim_us_p99": 2451.0,
+    "stale_round_cmds": 20,
+    "starved_slot_ticks": 1104,
+    "ticks": 4113,
+    "up_Bps": 5221.86875246253
+  },
+  "players": 2,
+  "results": {
+    "moving_hits_lagcomp_off": 6,
+    "moving_hits_lagcomp_on": 12,
+    "node_counts_per_reset": [
+      {
+        "1": 476,
+        "1060170765": 468,
+        "1141626013": 468
+      },
+      {
+        "1": 476,
+        "1060170765": 468,
+        "1141626013": 468
+      },
+      {
+        "1": 476,
+        "1060170765": 468,
+        "1141626013": 468
+      }
+    ]
+  }
+}

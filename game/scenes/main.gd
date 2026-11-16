@@ -1,6 +1,8 @@
 extends Node3D
-## M0 bootstrap: plain room, one capsule per rostered player, minimal host/join/leave UI.
-## Smoke hooks (headless tests): --smoke-offline, --smoke-host, --smoke-join=<ip>, --expect-reject
+## Menu: plain room, one capsule per rostered player, minimal host/join/leave UI. Hosting (Steam or ENet) goes
+## straight into the networked office match; a client follows once the host has accepted it.
+## Smoke hooks (headless tests): --smoke-offline, --smoke-host, --smoke-join=<ip>, --expect-reject (roster only)
+## Match hooks: --match-host | --match-join=<ip> [--wait-file=<path>] (+ --net-test=... for scripted tests)
 
 var _status: Label
 var _roster: Label
@@ -10,6 +12,8 @@ var _lobby_list: ItemList
 var _lobbies: Array = []
 var _capsules: Dictionary = {}
 var _smoke_timeout := 20.0
+var _entering := false
+var _wait_file := ""
 
 
 func _ready() -> void:
@@ -20,8 +24,10 @@ func _ready() -> void:
 	NetworkManager.roster_changed.connect(_refresh_roster)
 	SteamManager.status_changed.connect(_set_status)
 	SteamManager.lobby_list_updated.connect(_on_lobbies)
-	_set_status(SteamManager.init_message)
+	_set_status(SteamManager.init_message if NetworkManager.last_end_reason.is_empty() else NetworkManager.last_end_reason)
 	_refresh_roster()
+	NetworkManager.hosting_started.connect(_on_hosting_started)
+	NetworkManager.roster_changed.connect(_maybe_enter_as_client)
 	var a := NetworkManager.args
 	if a.has("capture") or a.has("bench"):
 		get_tree().change_scene_to_file.call_deferred("res://scenes/graybox.tscn")
@@ -39,6 +45,21 @@ func _ready() -> void:
 				get_tree().quit(0 if "Can't join" in r else 1))
 	if a.has("smoke-host") or a.has("smoke-join"):
 		NetworkManager.roster_changed.connect(_smoke_check)
+	if a.has("net-test") and a.has("host-left-ok") and NetworkManager.last_end_reason != "":
+		# A test client returned to the menu because the host left: that is the expected ending.
+		print("SMOKE_OK host-left reason='%s'" % NetworkManager.last_end_reason)
+		get_tree().quit(0)
+		return
+	if a.has("net-test"):
+		NetworkManager.connection_failed.connect(func(r: String) -> void:
+			print("SMOKE_FAIL net-test connection: ", r)
+			get_tree().quit(1))
+	if a.has("match-host") and not NetworkManager.is_in_session():
+		NetworkManager.host_enet(int(a.get("port", NetworkManager.DEFAULT_PORT)))
+	elif a.has("match-join") and not NetworkManager.is_in_session():
+		_wait_file = String(a.get("wait-file", ""))
+		if _wait_file.is_empty():
+			NetworkManager.join_enet(String(a["match-join"]), int(a.get("port", NetworkManager.DEFAULT_PORT)))
 
 
 func _smoke_check() -> void:
@@ -49,7 +70,32 @@ func _smoke_check() -> void:
 		get_tree().create_timer(1.0).timeout.connect(func() -> void: get_tree().quit(0))
 
 
+func _on_hosting_started() -> void:
+	var a := NetworkManager.args
+	if a.has("smoke-host"):
+		return
+	_enter_match()
+
+
+func _maybe_enter_as_client() -> void:
+	if NetworkManager.args.has("smoke-join") or multiplayer.multiplayer_peer == null or multiplayer.is_server():
+		return
+	if NetworkManager.is_in_session() and NetworkManager.player_names.has(multiplayer.get_unique_id()):
+		_enter_match()
+
+
+func _enter_match() -> void:
+	if _entering:
+		return
+	_entering = true
+	get_tree().change_scene_to_file.call_deferred("res://scenes/graybox.tscn")
+
+
 func _process(delta: float) -> void:
+	if not _wait_file.is_empty() and FileAccess.file_exists(_wait_file):
+		_wait_file = ""
+		var a0 := NetworkManager.args
+		NetworkManager.join_enet(String(a0["match-join"]), int(a0.get("port", NetworkManager.DEFAULT_PORT)))
 	var a := NetworkManager.args
 	if a.has("smoke-host") or a.has("smoke-join"):
 		_smoke_timeout -= delta
@@ -129,6 +175,7 @@ func _build_ui() -> void:
 	_button(box, "Join (ENet local test)", func() -> void: NetworkManager.join_enet(_ip_edit.text))
 	_button(box, "Leave", func() -> void: NetworkManager.leave())
 	_button(box, "Office visual slice (offline)", func() -> void:
+		NetworkManager.leave("Left to play offline")
 		get_tree().change_scene_to_file("res://scenes/graybox.tscn"))
 	_status = Label.new()
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

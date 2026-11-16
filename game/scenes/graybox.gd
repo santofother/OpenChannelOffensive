@@ -15,11 +15,16 @@ const DUCT_Z := -10.5 ## bulkhead face; ceiling drops to DUCT_H beyond it
 const DUCT_H := 1.5
 
 const WEAPON_TUNING := preload("res://data/weapon_tuning.tres")
+## Surfaces rifle rounds pass through (damage multiplier), bounded by Ballistics thickness/surface limits.
+const PEN_MULT := {"plaster": 0.5, "glass": 0.85}
 
 var player: Player
 var loadout: Loadout
 var modules: Array[WallModule] = []
 var targets: Array[PracticeTarget] = []
+var net: NetMatch ## set when this scene runs inside a network session
+var net_mode := false
+var _leaving := false
 var _spawn: Marker3D
 var _cams: Array[Camera3D] = []
 var _hud: Label
@@ -30,6 +35,8 @@ var _fails := 0
 
 
 func _ready() -> void:
+	net_mode = NetworkManager.is_in_session() and not NetworkManager.args.has("smoke-graybox") \
+		and not NetworkManager.args.has("smoke-combat")
 	_build_environment()
 	_build_level()
 	_spawn = Marker3D.new()
@@ -49,7 +56,21 @@ func _ready() -> void:
 	loadout.setup(player, self, WEAPON_TUNING.duplicate())
 	for m in modules:
 		m.state_changed.connect(loadout.on_module_changed)
-	if NetworkManager.args.has("smoke-graybox"):
+	if net_mode:
+		net = NetMatch.new()
+		add_child(net)
+		net.start(self)
+		NetworkManager.session_ended.connect(_on_session_ended)
+		if NetworkManager.args.has("net-test"):
+			player.scripted = true
+			loadout.bot = true
+			var nt := NetTest.new()
+			add_child(nt)
+			nt.start(self)
+			return
+		player.mouse_capture_changed.connect(_on_capture)
+		player.capture_mouse(true)
+	elif NetworkManager.args.has("smoke-graybox"):
 		player.scripted = true
 		_run_smoke()
 	elif NetworkManager.args.has("smoke-combat"):
@@ -116,7 +137,8 @@ func _build_level() -> void:
 	add_child(fig)
 	_box("Crate_1.0m", Vector3(4.0, 0.0, -3.0), Vector3(5.0, 1.0, -4.0), Surfaces.get_mat("case"))
 	# Practice targets in the room (x=8.4, facing the divider) and one by the corridor wall facing the corridor.
-	for t in [["Target_1", Vector3(8.4, 0.0, -6.0), 90.0], ["Target_2", Vector3(8.4, 0.0, -3.5), 90.0], ["Target_3", Vector3(-1.1, 0.0, -9.0), -150.0]]:
+	# Offline only: in a session the other players are the targets.
+	for t in [] if net_mode else [["Target_1", Vector3(8.4, 0.0, -6.0), 90.0], ["Target_2", Vector3(8.4, 0.0, -3.5), 90.0], ["Target_3", Vector3(-1.1, 0.0, -9.0), -150.0]]:
 		var tg := PracticeTarget.new()
 		tg.setup(t[0], t[1], t[2])
 		add_child(tg)
@@ -150,7 +172,14 @@ func _module(id: String, a: Vector3, b: Vector3, mat: int, col: Material) -> voi
 
 
 ## Full round restart: player, wall panels, targets, ammo/charges, marks and effects.
+## In a session only the host restarts (new round id for everyone).
 func restart() -> void:
+	if net:
+		if net.is_host:
+			net.restart_round()
+		else:
+			loadout.say("Only the host can restart the round")
+		return
 	player.reset()
 	for m in modules:
 		m.reset()
@@ -172,6 +201,9 @@ func _box(box_name: String, a: Vector3, b: Vector3, mat: Material, collide: bool
 		var sb := StaticBody3D.new()
 		sb.collision_layer = 1
 		sb.collision_mask = 0
+		for k: String in PEN_MULT:
+			if mat != null and mat == Surfaces.get_mat(k):
+				sb.set_meta("pen_mult", PEN_MULT[k])
 		var shape := CollisionShape3D.new()
 		var bs := BoxShape3D.new()
 		bs.size = size
@@ -243,6 +275,9 @@ func _build_ui() -> void:
 	back.text = "Back to menu"
 	back.pressed.connect(func() -> void:
 		player.capture_mouse(false)
+		_leaving = true
+		if net:
+			NetworkManager.leave("Left the match")
 		get_tree().change_scene_to_file("res://scenes/main.tscn"))
 	box.add_child(back)
 	_panel.visible = false
@@ -272,6 +307,14 @@ func _on_capture(captured: bool) -> void:
 	if not captured:
 		_sens.set_value_no_signal(player.look_sensitivity)
 		_fov.set_value_no_signal(player.fov)
+
+
+## Host left (or we were dropped): back to the menu, which shows the reason.
+func _on_session_ended(reason: String) -> void:
+	print("[Match] session ended: ", reason)
+	if is_inside_tree() and not _leaving:
+		player.capture_mouse(false)
+		get_tree().change_scene_to_file.call_deferred("res://scenes/main.tscn")
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -423,7 +466,8 @@ func _run_smoke_combat() -> void:
 	_stand_at(Vector3(3.0, 0.05, -6.0), 0.0)
 	await _frames(8)
 	r = lo.fire_rifle()
-	_check("wall shot leaves a bounded mark", r.get("hit", false) and not (r["collider"] is PracticeTarget) and lo.visible_marks() == 1)
+	_check("plaster wall shot penetrates, leaves one bounded mark", int(r.get("penetrated", 0)) == 1 and lo.visible_marks() == 1,
+		"pen=%d marks=%d" % [int(r.get("penetrated", 0)), lo.visible_marks()])
 
 	# --- reload / dry fire
 	_check("reload starts", lo.start_reload() and lo.reloading)

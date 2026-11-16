@@ -33,4 +33,9 @@ HP=$!; sleep 3
 "$GODOT_BIN" --headless --path game -- --smoke-join=127.0.0.1 --expect-reject --build-id=bogus --no-steam --port=$PORT > /tmp/fps_join2.log 2>&1 || { kill $HP 2>/dev/null; fail "mismatch not rejected (see /tmp/fps_join2.log)"; }
 kill $HP 2>/dev/null
 grep SMOKE_REJECTED /tmp/fps_join2.log
+
+echo "== networked match (host + client + late joiner: prediction, hits, penetration, charges, resets, leave)"
+NET_TEST_LOGS=/tmp/fps_net_check NET_TEST_PORT=24751 NET_METRICS_OUT=/tmp/fps_net_check_metrics.json \
+	./tools/net_test.sh 2 1 > /tmp/fps_netmatch.log 2>&1 || { grep -E "FAIL|SCRIPT ERROR" /tmp/fps_netmatch.log; fail "networked match (see /tmp/fps_netmatch.log, /tmp/fps_net_check/)"; }
+grep -E "FAIL|NET TEST" /tmp/fps_netmatch.log
 echo "ALL CHECKS PASSED"
