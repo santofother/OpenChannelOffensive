@@ -11,6 +11,10 @@ OUT=$("$GODOT_BIN" --headless --path game --import 2>&1); echo "$OUT" | grep -E 
 echo "== offline smoke"
 "$GODOT_BIN" --headless --path game -- --smoke-offline --no-steam 2>&1 | tee /tmp/fps_offline.log | grep -q SMOKE_OK || fail "offline smoke"
 
+echo "== graybox controller smoke (walls, crouch clearance, doorway, reset)"
+"$GODOT_BIN" --headless --path game res://scenes/graybox.tscn -- --smoke-graybox --no-steam 2>&1 | tee /tmp/fps_graybox.log | grep -E "PASS|FAIL|SMOKE|SCRIPT ERROR"
+grep -q "SMOKE_OK graybox" /tmp/fps_graybox.log || fail "graybox smoke (see /tmp/fps_graybox.log)"
+
 echo "== ENet host+join (2 players)"
 "$GODOT_BIN" --headless --path game -- --smoke-host --no-steam --port=$PORT --name=Host > /tmp/fps_host.log 2>&1 &
 HP=$!; sleep 3

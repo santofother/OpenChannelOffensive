@@ -1,6 +1,6 @@
 # Open Channel Offensive — project memory
 
-Updated: November 15, 2026. Status: M0 implemented and exportable; cross-machine Steam acceptance pending.
+Updated: November 15, 2026. Status: M0 accepted by user (Steam works); Session 02 controller/graybox implemented, human playtest pending.
 Session index: [session/README.md](session/README.md). Read only the active session below and relevant code; shared references are optional.
 
 ## Brief, pillars and loop
@@ -62,15 +62,20 @@ Export templates 4.7.2 are installed (macOS + Windows). Smoke flags after `--`: 
 
 ## Current milestone, known issues and next task
 
-Current milestone: **M0 setup/export/Steam compatibility** — implementation done, manual cross-machine acceptance pending.
-Active session: [Session 01 — Steam foundation and exports](session/01-steam-foundation.md). Read this file next, not the entire session folder.
-After its acceptance checks pass: [Session 02 — FPS controller and graybox](session/02-controller-graybox.md).
+Current milestone: **M1 part 1** — controller and graybox implemented; human playtest pending.
+Active session: [Session 02 — FPS controller and graybox](session/02-controller-graybox.md). Read this file next, not the entire session folder.
+Session 01 (M0): accepted by the user's report that Steam works; the Mac↔Windows details below were not recorded here.
+After Session 02's playtest passes: [Session 03 — shooting and breaches](session/03-shooting-breaches.md).
+
+Built (Session 02): `scenes/graybox.tscn/.gd` (code-built level, 1 unit = 1 m: corridor 2.9 m wide x 13 m, room, doorway 1.0x2.1, window sill 1.0 / head 2.0, reinforced wall sections (dark, thicker), 1.5 m low-ceiling duct, scale figure/crate, omni lights, fixed cameras F1–F3, F4 back to player); `scenes/player.tscn` + `scripts/player/player.gd` (CharacterBody3D walk/sprint/hold-crouch, no jump/lean, mouse capture on start, Esc releases / click recaptures, R reset, sensitivity + FOV sliders persisted to `user://settings.cfg`; crouch release is blocked while the standing capsule would hit a ceiling); tuning in `data/player_tuning.tres` (`PlayerTuning`). Menu button "Graybox movement test (offline)" opens it; "Back to menu" returns. `./tools/check.sh` now includes a headless graybox smoke (walls hold east/west, standing blocked at duct, crouch passes, no standing up under duct, doorway passable, reinforced wall and window sill block, reset, eye height) — all pass.
+Not verified (needs human playtest): feel/responsiveness of acceleration and speeds (walk 4.0, sprint 5.8, crouch 2.0 m/s), mouse look feel and sensitivity range, scale impression, snagging on door/window frames, mouse capture/release on Mac and Windows, the pause panel layout, how the three fixed cameras look. Lighting is unjudged. Run: `"$GODOT_BIN" --path game`, then the menu button. Walls are plain colliders; stable wall IDs/damage states come in Session 03.
+Next task: playtest the graybox, tweak `player_tuning.tres`, then mark Session 02 done and move to Session 03.
 
 Built (Session 01): local Git repo (committed as 5e3da1a; build id `0.1.0-p1+5e3da1a`; re-commit and re-export together so host/clients match); `game/project.godot` (Jolt, input map, ETC2/ASTC on for Mac export); autoloads `NetworkManager` (6-player cap, `build_id` = version-protocol+commit, host rejects mismatched build or full match with clear messages) and `SteamManager` (app 480, lobby key `openchanneloffensive_m0`, lobby build check, graceful failure when Steam is missing); `scenes/main.tscn` room + capsule roster + host/join/leave UI (Steam and ENet local test); `addons/fps_export` (commit stamp, steam_appid copy); GodotSteam 4.23.2 osx+win64 libs only; export presets Mac universal (ad-hoc signed, mic description, bundle `com.santofother.openchanneloffensive`) and Windows x64.
 
 Verified here: check.sh passes; Windows and Mac debug exports build; exported Mac app launches headless and initialises Steam as the logged-in user.
 Not verified: exported Windows build running; Steam host/join between Mac and Windows (either direction), leave/reconnect, Steam full-lobby message (cap is passed to Steam createLobby; message mapped for code 4, untested); microphone prompt on Mac; Windows hardware/testers not chosen; first Mac launch may need Gatekeeper right-click Open for ad-hoc builds. Only the Mac libs for debug template were bundled in the Mac export; release export not tried.
-Exports rebuilt from commit 5e3da1a (Mac build reports that id; `build/windows.zip`, 34 MB, ready to send). Next task: send the Windows zip to a tester, run Mac-host/Windows-join and reverse over Steam, record results/hardware here, then mark Session 01 done and move to Session 02.
+(Session 01 history) Exports rebuilt from commit 5e3da1a (Mac build reports that id; `build/windows.zip`, 34 MB, ready to send). Next task: send the Windows zip to a tester, run Mac-host/Windows-join and reverse over Steam, record results/hardware here, then mark Session 01 done and move to Session 02.
 
 ## Working agreement
 
