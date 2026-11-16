@@ -23,6 +23,9 @@ func _ready() -> void:
 	_set_status(SteamManager.init_message)
 	_refresh_roster()
 	var a := NetworkManager.args
+	if a.has("capture") or a.has("bench"):
+		get_tree().change_scene_to_file.call_deferred("res://scenes/graybox.tscn")
+		return
 	if a.has("smoke-offline"):
 		print("SMOKE_OK offline build=", NetworkManager.build_id, " steam='", SteamManager.init_message, "'")
 		get_tree().quit(0)
@@ -125,7 +128,7 @@ func _build_ui() -> void:
 	_button(box, "Host (ENet local test)", func() -> void: NetworkManager.host_enet())
 	_button(box, "Join (ENet local test)", func() -> void: NetworkManager.join_enet(_ip_edit.text))
 	_button(box, "Leave", func() -> void: NetworkManager.leave())
-	_button(box, "Graybox movement test (offline)", func() -> void:
+	_button(box, "Office visual slice (offline)", func() -> void:
 		get_tree().change_scene_to_file("res://scenes/graybox.tscn"))
 	_status = Label.new()
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

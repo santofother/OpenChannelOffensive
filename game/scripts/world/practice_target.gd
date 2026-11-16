@@ -1,6 +1,6 @@
 class_name PracticeTarget
 extends StaticBody3D
-## Shootable practice silhouette. Collision layer 3 ("targets"). Falls over when its health reaches 0.
+## Shootable practice silhouette (operator stand-in, red team band). Collision layer 3 ("targets"). Falls over when its health reaches 0.
 
 signal downed(target: PracticeTarget)
 
@@ -9,7 +9,6 @@ const MAX_HEALTH := 100.0
 var health := MAX_HEALTH
 var alive := true
 var _mat: StandardMaterial3D
-var _base := Color(0.85, 0.2, 0.15)
 var _tween: Tween
 
 
@@ -19,25 +18,17 @@ func setup(id: String, pos: Vector3, yaw_deg: float = 0.0) -> void:
 	rotation.y = deg_to_rad(yaw_deg)
 	collision_layer = 4
 	collision_mask = 0
-	var size := Vector3(0.5, 1.7, 0.12)
+	var size := Vector3(0.5, 1.75, 0.3)
 	var cs := CollisionShape3D.new()
 	var bs := BoxShape3D.new()
 	bs.size = size
 	cs.shape = bs
 	cs.position.y = size.y * 0.5
 	add_child(cs)
-	_mat = StandardMaterial3D.new()
-	_mat.albedo_color = _base
+	_mat = Surfaces.get_mat("fabric_dark").duplicate()
 	_mat.emission_enabled = true
 	_mat.emission = Color.BLACK
-	var mi := MeshInstance3D.new()
-	var bm := BoxMesh.new()
-	bm.size = size
-	bm.material = _mat
-	mi.mesh = bm
-	mi.position.y = size.y * 0.5
-	add_child(mi)
-
+	add_child(StandIn.build(StandIn.TEAM_RED, _mat))
 
 ## Returns true if this hit downed the target.
 func apply_damage(amount: float) -> bool:

@@ -3,16 +3,16 @@ extends Node3D
 ## Corridor x[-1.5,1.4], z[-13,0]; divider wall (centre x=1.5) with doorway, window, reinforced section;
 ## room x[1.6,9.5], z[-9,-2]; low-ceiling duct (1.5 m) from z=-10.5 to the corridor end (standing blocked, crouch passes).
 ## F1-F3 fixed comparison cameras, F4 back to player, T restart, Esc releases the mouse.
+## Session 04: PBR palette (Surfaces), lighting/dressing/exterior (OfficeSet), viewmodel, --capture / --bench (SliceBench).
 ## Session 03: divider modules B (reinforced), C and D1 (ordinary) are breachable WallModules; practice targets in the room.
 ## Keys: 1/2/3 rifle/ordinary charge/heavy charge, LMB fire/place, RMB aim, R reload, T restart (full reset).
+## Evidence (windowed): -- --capture[=dir] | --bench[=secs] [--bench-out=path] [--vsync]
 ## Headless tests: godot --headless --path game res://scenes/graybox.tscn -- --smoke-graybox | --smoke-combat
 
 const PLAYER_SCENE := preload("res://scenes/player.tscn")
 const CEIL := 2.8
 const DUCT_Z := -10.5 ## bulkhead face; ceiling drops to DUCT_H beyond it
 const DUCT_H := 1.5
-const ORDINARY := Color(0.55, 0.52, 0.48)
-const REINFORCED := Color(0.28, 0.32, 0.38)
 
 const WEAPON_TUNING := preload("res://data/weapon_tuning.tres")
 
@@ -55,6 +55,11 @@ func _ready() -> void:
 	elif NetworkManager.args.has("smoke-combat"):
 		player.scripted = true
 		_run_smoke_combat()
+	elif NetworkManager.args.has("capture") or NetworkManager.args.has("bench"):
+		var bench := SliceBench.new()
+		bench.name = "SliceBench"
+		add_child(bench)
+		bench.start(self)
 	else:
 		player.mouse_capture_changed.connect(_on_capture)
 		player.capture_mouse(true)
@@ -63,24 +68,19 @@ func _ready() -> void:
 # ---------------------------------------------------------------- level
 
 func _build_environment() -> void:
-	var env := WorldEnvironment.new()
-	env.environment = Environment.new()
-	env.environment.background_mode = Environment.BG_COLOR
-	env.environment.background_color = Color(0.05, 0.06, 0.09)
-	env.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.environment.ambient_light_color = Color(0.55, 0.58, 0.65)
-	env.environment.ambient_light_energy = 0.6
-	add_child(env)
+	OfficeSet.build_environment(self)
 
 
 func _build_level() -> void:
-	var floor_c := Color(0.32, 0.32, 0.35)
-	var ceil_c := Color(0.62, 0.62, 0.64)
-	_box("Floor", Vector3(-1.7, -0.2, -13.2), Vector3(9.7, 0.0, 0.2), floor_c)
-	# Ceilings: corridor, room, and the low duct (bulkhead + low slab).
-	_box("CeilingCorridor", Vector3(-1.5, CEIL, DUCT_Z), Vector3(1.5, CEIL + 0.2, 0.0), ceil_c)
-	_box("CeilingRoom", Vector3(1.5, CEIL, -9.0), Vector3(9.5, CEIL + 0.2, -2.0), ceil_c)
-	_box("DuctCeiling", Vector3(-1.5, DUCT_H, -13.0), Vector3(1.5, CEIL + 0.2, DUCT_Z), ceil_c)
+	var ORDINARY := Surfaces.get_mat("plaster")
+	var REINFORCED := Surfaces.get_mat("metal_plate")
+	_box("Floor", Vector3(-1.7, -0.2, -13.2), Vector3(9.7, 0.0, 0.2), Surfaces.get_mat("carpet"))
+	# Ceilings: corridor, room, and the low duct (bulkhead + low slab). Roof seals everything from moonlight.
+	var ceil_m := Surfaces.get_mat("ceiling")
+	_box("CeilingCorridor", Vector3(-1.5, CEIL, DUCT_Z), Vector3(1.5, CEIL + 0.2, 0.0), ceil_m)
+	_box("CeilingRoom", Vector3(1.5, CEIL, -9.1), Vector3(9.6, CEIL + 0.2, -1.9), ceil_m)
+	_box("DuctCeiling", Vector3(-1.5, DUCT_H, -13.0), Vector3(1.5, CEIL + 0.2, DUCT_Z), ORDINARY)
+	_box("Roof", Vector3(-1.8, CEIL + 0.2, -13.3), Vector3(9.8, CEIL + 0.4, 0.3), Surfaces.get_mat("trim"))
 	# Corridor end caps and west wall.
 	_wall_z("CorridorStart", 0.0, -1.5, 1.5, 0.2, 0.0, CEIL, ORDINARY)
 	_wall_z("CorridorEnd", -13.1, -1.5, 1.5, 0.2, 0.0, CEIL, ORDINARY)
@@ -94,31 +94,41 @@ func _build_level() -> void:
 	_wall_x("Window_lintel", 1.5, -6.3, -7.5, 0.2, 2.0, CEIL, ORDINARY)
 	_wall_x("Divider_D1_ordinary", 1.5, -7.5, -9.0, 0.2, 0.0, CEIL, ORDINARY, WallModule.Mat.ORDINARY)
 	_wall_x("Divider_D2_ordinary", 1.5, -9.0, -13.0, 0.2, 0.0, CEIL, ORDINARY)
-	# Room walls: north, east, south (with a reinforced section).
+	# Room walls: north, east (exterior window band z -3..-8, sill 0.9, head 2.3), south (with a reinforced section).
 	_wall_z("Room_north", -2.0, 1.6, 9.6, 0.2, 0.0, CEIL, ORDINARY)
-	_wall_x("Room_east", 9.6, -2.0, -9.0, 0.2, 0.0, CEIL, ORDINARY)
+	_wall_x("Room_east_N", 9.6, -2.0, -3.0, 0.2, 0.0, CEIL, ORDINARY)
+	_wall_x("Room_east_sill", 9.6, -3.0, -8.0, 0.2, 0.0, 0.9, ORDINARY)
+	_wall_x("Room_east_head", 9.6, -3.0, -8.0, 0.2, 2.3, CEIL, ORDINARY)
+	_wall_x("Room_east_S", 9.6, -8.0, -9.0, 0.2, 0.0, CEIL, ORDINARY)
 	_wall_z("Room_south_W", -9.0, 1.6, 4.0, 0.2, 0.0, CEIL, ORDINARY)
 	_wall_z("Room_south_reinforced", -9.0, 4.0, 6.0, 0.34, 0.0, CEIL, REINFORCED)
 	_wall_z("Room_south_E", -9.0, 6.0, 9.6, 0.2, 0.0, CEIL, ORDINARY)
-	# Scale references: 1.8 m figure in the room, 1.0 m crate.
-	_box("ScaleFigure_1.8m", Vector3(7.0, 0.0, -5.0), Vector3(7.5, 1.8, -5.5), Color(0.85, 0.45, 0.15))
-	_box("Crate_1.0m", Vector3(4.0, 0.0, -3.0), Vector3(5.0, 1.0, -4.0), Color(0.5, 0.38, 0.25))
-	# Practice targets in the room (x=8.4, facing the divider) and one by the corridor wall.
-	for t in [["Target_1", Vector3(8.4, 0.0, -6.0)], ["Target_2", Vector3(8.4, 0.0, -3.5)], ["Target_3", Vector3(-1.1, 0.0, -9.0)]]:
+	# Exterior glazing: three panes with mullions (solid: blocks movement and shots).
+	for i in 4:
+		var z := -3.0 - i * (5.0 / 3.0)
+		_box("Mullion_%d" % i, Vector3(9.55, 0.9, z + 0.04), Vector3(9.65, 2.3, z - 0.04), Surfaces.get_mat("trim"))
+	_box("Glass_exterior", Vector3(9.59, 0.9, -3.0), Vector3(9.61, 2.3, -8.0), Surfaces.get_mat("glass"))
+	# Scale references: operator stand-in (1.8 m class) in the room and a 1.0 m equipment case.
+	_box("ScaleFigure_1.8m", Vector3(7.0, 0.0, -5.0), Vector3(7.5, 1.8, -5.5), null)
+	var fig := StandIn.build(StandIn.TEAM_BLUE)
+	fig.position = Vector3(7.25, 0.0, -5.25)
+	fig.rotation.y = deg_to_rad(110)
+	add_child(fig)
+	_box("Crate_1.0m", Vector3(4.0, 0.0, -3.0), Vector3(5.0, 1.0, -4.0), Surfaces.get_mat("case"))
+	# Practice targets in the room (x=8.4, facing the divider) and one by the corridor wall facing the corridor.
+	for t in [["Target_1", Vector3(8.4, 0.0, -6.0), 90.0], ["Target_2", Vector3(8.4, 0.0, -3.5), 90.0], ["Target_3", Vector3(-1.1, 0.0, -9.0), -150.0]]:
 		var tg := PracticeTarget.new()
-		tg.setup(t[0], t[1], 90.0)
+		tg.setup(t[0], t[1], t[2])
 		add_child(tg)
 		targets.append(tg)
-	# Warm practical lights (no GI, per architecture notes).
-	_light(Vector3(0, 2.5, -3), 7.0)
-	_light(Vector3(0, 2.5, -8), 7.0)
-	_light(Vector3(5.5, 2.5, -5.5), 10.0)
-	_light(Vector3(0, 1.3, -12), 4.0)
+	OfficeSet.build_dressing(self)
+	OfficeSet.build_lights(self)
+	OfficeSet.build_exterior(self)
 
 
 ## Wall running along Z at fixed x (centre line), spanning z0..z1.
 ## `mat` >= 0 makes it a breachable WallModule of that material.
-func _wall_x(wall_name: String, x: float, z0: float, z1: float, thick: float, y0: float, y1: float, col: Color, mat: int = -1) -> void:
+func _wall_x(wall_name: String, x: float, z0: float, z1: float, thick: float, y0: float, y1: float, col: Material, mat: int = -1) -> void:
 	var a := Vector3(x - thick * 0.5, y0, z1)
 	var b := Vector3(x + thick * 0.5, y1, z0)
 	if mat >= 0:
@@ -128,11 +138,11 @@ func _wall_x(wall_name: String, x: float, z0: float, z1: float, thick: float, y0
 
 
 ## Wall running along X at fixed z (centre line), spanning x0..x1.
-func _wall_z(wall_name: String, z: float, x0: float, x1: float, thick: float, y0: float, y1: float, col: Color) -> void:
+func _wall_z(wall_name: String, z: float, x0: float, x1: float, thick: float, y0: float, y1: float, col: Material) -> void:
 	_box(wall_name, Vector3(x0, y0, z - thick * 0.5), Vector3(x1, y1, z + thick * 0.5), col)
 
 
-func _module(id: String, a: Vector3, b: Vector3, mat: int, col: Color) -> void:
+func _module(id: String, a: Vector3, b: Vector3, mat: int, col: Material) -> void:
 	var m := WallModule.new()
 	m.setup(id, a, b, mat, col)
 	add_child(m)
@@ -150,40 +160,37 @@ func restart() -> void:
 
 
 ## Axis-aligned box from min corner a to max corner b (any order); static collision + mesh.
-func _box(box_name: String, a: Vector3, b: Vector3, col: Color) -> void:
+## `mat` null = invisible collider (used under stand-ins); `collide` false = decoration only.
+func _box(box_name: String, a: Vector3, b: Vector3, mat: Material, collide: bool = true) -> Node3D:
 	var lo := Vector3(minf(a.x, b.x), minf(a.y, b.y), minf(a.z, b.z))
 	var hi := Vector3(maxf(a.x, b.x), maxf(a.y, b.y), maxf(a.z, b.z))
 	var size := hi - lo
 	if size.x <= 0.0 or size.y <= 0.0 or size.z <= 0.0:
-		return
-	var body := StaticBody3D.new()
+		return null
+	var body: Node3D
+	if collide:
+		var sb := StaticBody3D.new()
+		sb.collision_layer = 1
+		sb.collision_mask = 0
+		var shape := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = size
+		shape.shape = bs
+		sb.add_child(shape)
+		body = sb
+	else:
+		body = Node3D.new()
 	body.name = box_name
-	body.collision_layer = 1
-	body.collision_mask = 0
 	body.position = (lo + hi) * 0.5
-	var shape := CollisionShape3D.new()
-	var bs := BoxShape3D.new()
-	bs.size = size
-	shape.shape = bs
-	body.add_child(shape)
-	var mi := MeshInstance3D.new()
-	var bm := BoxMesh.new()
-	bm.size = size
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = col
-	bm.material = mat
-	mi.mesh = bm
-	body.add_child(mi)
+	if mat:
+		var mi := MeshInstance3D.new()
+		var bm := BoxMesh.new()
+		bm.size = size
+		bm.material = mat
+		mi.mesh = bm
+		body.add_child(mi)
 	add_child(body)
-
-
-func _light(pos: Vector3, rng: float) -> void:
-	var l := OmniLight3D.new()
-	l.position = pos
-	l.omni_range = rng
-	l.light_color = Color(1.0, 0.86, 0.65)
-	l.light_energy = 1.2
-	add_child(l)
+	return body
 
 
 # ---------------------------------------------------------------- cameras / UI

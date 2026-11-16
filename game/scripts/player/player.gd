@@ -101,6 +101,13 @@ func teleport(pos: Vector3, yaw_deg: float) -> void:
 	velocity = Vector3.ZERO
 
 
+## Sets view direction directly (scripted captures/benchmarks).
+func set_look(yaw_deg: float, pitch_deg: float) -> void:
+	rotation = Vector3(0.0, deg_to_rad(yaw_deg), 0.0)
+	_pitch = clampf(deg_to_rad(pitch_deg), -deg_to_rad(tuning.pitch_limit_deg), deg_to_rad(tuning.pitch_limit_deg))
+	_head.rotation.x = _pitch
+
+
 func can_stand() -> bool:
 	var q := PhysicsShapeQueryParameters3D.new()
 	q.shape = _stand_probe

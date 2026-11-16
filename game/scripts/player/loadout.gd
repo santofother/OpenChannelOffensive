@@ -14,6 +14,7 @@ var tuning: WeaponTuning
 var player: Player
 var world: Node3D
 var effects: BreachEffects
+var viewmodel: Viewmodel
 var tool := Tool.RIFLE
 var mag := 0
 var reserve := 0
@@ -56,6 +57,9 @@ func setup(p: Player, w: Node3D, t: WeaponTuning) -> void:
 	_flash.visible = false
 	_flash.position = tuning.muzzle_offset
 	player.camera.add_child(_flash)
+	viewmodel = Viewmodel.new()
+	player.camera.add_child(viewmodel)
+	viewmodel.setup(self)
 	_mark_mat = StandardMaterial3D.new()
 	_mark_mat.albedo_color = Color(0.05, 0.05, 0.05, 0.85)
 	_mark_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -91,6 +95,10 @@ func reset() -> void:
 	if _flash:
 		_flash.visible = false
 	_say("")
+
+
+func reload_left() -> float:
+	return _reload_left
 
 
 func visible_marks() -> int:

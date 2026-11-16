@@ -1,0 +1,53 @@
+{
+  "all": {
+    "avg_fps": 204.3,
+    "frames": 12260,
+    "max_ms": 29.1,
+    "mean_ms": 4.89,
+    "median_ms": 4.9,
+    "over_33ms": 0,
+    "p95_ms": 5.91,
+    "p99_ms": 6.8
+  },
+  "api": "4.0",
+  "build_id": "0.1.0-p1+f250565",
+  "debug_build": true,
+  "draw_calls_avg": 291.1,
+  "draw_calls_max": 919,
+  "frames": 12260,
+  "gpu": "Apple M1 Pro (Apple7)",
+  "nodes_end": 539.0,
+  "nodes_start": 486.0,
+  "os": "macOS",
+  "post_breach": {
+    "avg_fps": 204.9,
+    "frames": 11365,
+    "max_ms": 12.34,
+    "mean_ms": 4.88,
+    "median_ms": 4.89,
+    "over_33ms": 0,
+    "p95_ms": 5.9,
+    "p99_ms": 6.75
+  },
+  "pre_breach": {
+    "avg_fps": 197.1,
+    "frames": 895,
+    "max_ms": 29.1,
+    "mean_ms": 5.07,
+    "median_ms": 4.99,
+    "over_33ms": 0,
+    "p95_ms": 6.0,
+    "p99_ms": 7.74
+  },
+  "primitives_avg": 54739.3,
+  "renderer": "forward_plus",
+  "screen_scale": 2.0,
+  "seconds": 60.0,
+  "spikes_over_33ms": [],
+  "static_mem_mb": 92.9,
+  "video_mem_mb": 271.5,
+  "vsync": false,
+  "walls_breached": 2,
+  "waypoints_visited": 42,
+  "window": "(1920.0, 1080.0)"
+}
