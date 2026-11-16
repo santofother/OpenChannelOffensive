@@ -10,6 +10,8 @@ var module: WallModule
 var charge_id := 0
 var owner_id := 1
 var authoritative := true
+## Replicated copies follow the host clock: returns seconds left (NetMatch). Unset = count down locally.
+var clock: Callable
 var kind := WallModule.Kind.ORDINARY
 var normal := Vector3.RIGHT
 var left := 3.0
@@ -50,7 +52,10 @@ func setup(m: WallModule, k: int, fuse: float, pos: Vector3, n: Vector3) -> void
 
 
 func _process(delta: float) -> void:
-	left -= delta
+	if clock.is_valid():
+		left = minf(left, maxf(float(clock.call()), 0.0))
+	else:
+		left -= delta
 	_beep_gap -= delta
 	var sec := int(ceilf(left))
 	if left <= 1.0:

@@ -376,7 +376,8 @@ func _full_state(for_id: int) -> Dictionary:
 	var ch: Array = []
 	for c: Charge in get_tree().get_nodes_in_group("charges"):
 		if is_instance_valid(c) and c.left > 0.0:
-			ch.append([c.charge_id, c.owner_id, c.module.wall_id, c.kind, c.global_position, c.normal, c.left])
+			ch.append([c.charge_id, c.owner_id, c.module.wall_id, c.kind, c.global_position, c.normal, c.left,
+				tick + int(roundf(c.left * TICK_RATE))])
 	return {"round": round_id, "tick": tick, "you": for_id, "players": pl, "walls": walls, "charges": ch}
 
 
@@ -535,17 +536,24 @@ func _on_fired(res: Dictionary, shooter_id: int) -> void:
 			g.loadout._add_mark(e, n, res["collider"])
 
 
+## Wall-clock stamp for timing logs (comparable between processes on one machine).
+static func _t() -> String:
+	return "%.3f" % fmod(Time.get_unix_time_from_system(), 1000.0)
+
+
 func _on_charge_placed(c: Charge) -> void:
 	_next_charge += 1
 	c.charge_id = _next_charge
+	print("[Timing] t=%s host CHARGE placed id=%d owner=%d fuse=%.2f tick=%d" % [_t(), c.charge_id, c.owner_id, c.left, tick])
 	c.detonated.connect(_on_charge_detonated)
 	_broadcast(_rel(Msg.EVENT, [Ev.CHARGE, round_id, c.charge_id, c.owner_id, c.module.wall_id, c.kind,
-		c.global_position, c.normal, c.left]), true)
+		c.global_position, c.normal, c.left, tick + int(roundf(c.left * TICK_RATE))]), true)
 	if c.owner_id != 1:
 		ProcAudio.play(g, "beep", c.global_position)
 
 
 func _on_charge_detonated(c: Charge) -> void:
+	print("[Timing] t=%s host DETONATE id=%d tick=%d" % [_t(), c.charge_id, tick])
 	_broadcast(_rel(Msg.EVENT, [Ev.DETONATE, round_id, c.charge_id]), true)
 
 
@@ -859,11 +867,14 @@ func _apply_full(d: Dictionary, first: bool) -> void:
 	for c: Node in get_tree().get_nodes_in_group("charges"):
 		c.free()
 	for cd: Array in d["charges"]:
-		_spawn_remote_charge(cd[0], cd[1], cd[2], cd[3], cd[4], cd[5], cd[6])
+		_spawn_remote_charge(cd[0], cd[1], cd[2], cd[3], cd[4], cd[5], cd[6], cd[7])
 	synced = true
 
 
-func _spawn_remote_charge(cid: int, owner: int, wall_id: String, kind: int, pos: Vector3, n: Vector3, left: float) -> void:
+## Client copy of a host charge. It counts down to the host's detonation tick (not from message arrival), so a
+## late message or a frame stall can't make its countdown run behind the real breach.
+func _spawn_remote_charge(cid: int, owner: int, wall_id: String, kind: int, pos: Vector3, n: Vector3, left: float,
+		end_tick: int) -> void:
 	var m: WallModule = g._mod(wall_id)
 	if m == null:
 		return
@@ -871,8 +882,9 @@ func _spawn_remote_charge(cid: int, owner: int, wall_id: String, kind: int, pos:
 	c.charge_id = cid
 	c.owner_id = owner
 	c.authoritative = false
+	c.clock = func() -> float: return (end_tick - _server_tick_f) / TICK_RATE
 	g.add_child(c)
-	c.setup(m, kind, left, pos, n)
+	c.setup(m, kind, minf(left, maxf((end_tick - _server_tick_f) / TICK_RATE, 0.0)), pos, n)
 	m.charge = c
 
 
@@ -911,11 +923,14 @@ func _on_event(ev: Array) -> void:
 		return
 	match kind:
 		Ev.CHARGE:
+			print("[Timing] t=%s client CHARGE recv id=%d left=%.2f by host clock=%.2f" % [_t(), int(ev[2]), float(ev[8]),
+				(int(ev[9]) - _server_tick_f) / TICK_RATE])
 			if _find_charge(int(ev[2])) == null:
-				_spawn_remote_charge(ev[2], ev[3], ev[4], ev[5], ev[6], ev[7], ev[8])
+				_spawn_remote_charge(ev[2], ev[3], ev[4], ev[5], ev[6], ev[7], ev[8], ev[9])
 				if int(ev[3]) == my_id:
 					g.loadout.say("Charge armed: %.0f s. Move away!" % float(ev[8]))
 		Ev.DETONATE:
+			print("[Timing] t=%s client DETONATE recv id=%d" % [_t(), int(ev[2])])
 			var c := _find_charge(int(ev[2]))
 			if c:
 				if g.loadout.effects:
@@ -924,6 +939,7 @@ func _on_event(ev: Array) -> void:
 					c.module.charge = null
 				c.queue_free()
 		Ev.WALL:
+			print("[Timing] t=%s client WALL recv %s rev=%d" % [_t(), String(ev[2]), int(ev[4])])
 			var m: WallModule = g._mod(String(ev[2]))
 			if m == null or not m.apply_remote(int(ev[3]), int(ev[4])):
 				metrics["stale_events"] += 1
@@ -994,6 +1010,8 @@ func _physics_process(_delta: float) -> void:
 
 
 func _process(delta: float) -> void:
+	if delta > 0.1:
+		print("[Timing] t=%s %s frame stall %.0f ms" % [_t(), "host" if is_host else "client", delta * 1000.0])
 	if not is_host and synced:
 		_server_tick_f += delta * TICK_RATE
 		_interpolate()

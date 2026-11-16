@@ -56,6 +56,8 @@ func _ready() -> void:
 	loadout.setup(player, self, WEAPON_TUNING.duplicate())
 	for m in modules:
 		m.state_changed.connect(loadout.on_module_changed)
+	if DisplayServer.get_name() != "headless" and not NetworkManager.args.has("capture"):
+		_warm_up_graphics()
 	if net_mode:
 		net = NetMatch.new()
 		add_child(net)
@@ -307,6 +309,76 @@ func _on_capture(captured: bool) -> void:
 	if not captured:
 		_sens.set_value_no_signal(player.look_sensitivity)
 		_fov.set_value_no_signal(player.fov)
+
+
+## First-use graphics stalls (shader/pipeline compiles for the charges, held-charge viewmodel, breach particles,
+## scorch decal and bullet marks) froze a window for ~0.15–1.2 s the first time each appeared mid-fight.
+## Draw each once at load, behind a short loading cover, so the cost lands here instead.
+func _warm_up_graphics() -> void:
+	var cover := CanvasLayer.new()
+	cover.layer = 100
+	var bg := ColorRect.new()
+	bg.color = Color(0.03, 0.03, 0.04)
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	cover.add_child(bg)
+	var l := Label.new()
+	l.text = "Loading..."
+	l.set_anchors_preset(Control.PRESET_CENTER)
+	cover.add_child(l)
+	add_child(cover)
+	await get_tree().process_frame
+	var t0 := Time.get_ticks_msec()
+	var cam := player.camera.global_transform
+	var at := func(x: float, y: float, d: float) -> Vector3: return cam * Vector3(x, y, -d)
+	var face := cam.basis.z
+	var tmp: Array[Node] = []
+	# Behind-cover geometry for decal/particles to land on.
+	var back := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = Vector3(4, 3, 0.1)
+	bm.material = Surfaces.get_mat("plaster")
+	back.mesh = bm
+	add_child(back)
+	back.global_transform = Transform3D(cam.basis, at.call(0.0, 0.0, 3.0))
+	tmp.append(back)
+	for k in [WallModule.Kind.ORDINARY, WallModule.Kind.HEAVY]:
+		var c := Charge.new()
+		c.authoritative = false
+		add_child(c)
+		c.setup(modules[0], k, 99.0, at.call(-0.5 + k, 0.0, 2.0), face)
+		c.remove_from_group("charges")
+		c.set_process(false)
+		tmp.append(c)
+	var d := Decal.new()
+	d.texture_albedo = WallModule._scorch()
+	d.size = Vector3(2, 1, 2)
+	add_child(d)
+	d.global_transform = Transform3D(Basis.looking_at(-face, cam.basis.y) * Basis(Vector3.RIGHT, deg_to_rad(90)), at.call(0.0, 0.0, 2.95))
+	tmp.append(d)
+	var mark := MeshInstance3D.new()
+	var q := QuadMesh.new()
+	q.size = Vector2(0.3, 0.3)
+	q.material = loadout._mark_mat
+	mark.mesh = q
+	add_child(mark)
+	mark.global_transform = Transform3D(cam.basis, at.call(0.3, 0.3, 2.0))
+	tmp.append(mark)
+	loadout.effects.burst(at.call(0.0, 0.0, 2.5), face, true, true)
+	var vm := loadout.viewmodel
+	if vm:
+		vm.set_process(false)
+		vm._charge_ord.visible = true
+		vm._charge_heavy.visible = true
+		vm._rifle.visible = true
+	for i in 4:
+		await get_tree().process_frame
+	for n in tmp:
+		n.queue_free()
+	loadout.effects.clear()
+	if vm:
+		vm.set_process(true)
+	cover.queue_free()
+	print("[Warmup] graphics warm-up %d ms" % (Time.get_ticks_msec() - t0))
 
 
 ## Host left (or we were dropped): back to the menu, which shows the reason.

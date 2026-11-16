@@ -11,7 +11,7 @@ var active := 0
 var _gen := 0 ## bumps on clear() so stale timers don't corrupt `active`
 
 
-func burst(pos: Vector3, normal: Vector3, heavy: bool) -> bool:
+func burst(pos: Vector3, normal: Vector3, heavy: bool, silent: bool = false) -> bool:
 	if active >= MAX_BURSTS:
 		return false
 	active += 1
@@ -20,7 +20,8 @@ func burst(pos: Vector3, normal: Vector3, heavy: bool) -> bool:
 	root.global_position = pos
 	root.add_child(_particles(DUST_AMOUNT, 0.35 if heavy else 0.25, Color(0.72, 0.69, 0.64, 0.55), Vector3(0, 0.3, 0), 0.5, 2.2, true))
 	root.add_child(_particles(CHUNK_AMOUNT, 0.07, Color(0.45, 0.43, 0.4, 1.0), Vector3(0, -9.0, 0), 1.5, 4.5, false))
-	ProcAudio.play(root, "boom", pos, 4.0 if heavy else 0.0)
+	if not silent:
+		ProcAudio.play(root, "boom", pos, 4.0 if heavy else 0.0)
 	var timer := Timer.new() ## child of root, so clear() frees it along with the burst
 	timer.one_shot = true
 	timer.wait_time = LIFETIME
