@@ -4,6 +4,7 @@ extends CharacterBody3D
 ## Origin is at the feet. Esc releases the mouse; a click recaptures it.
 
 signal mouse_capture_changed(captured: bool)
+signal reset_requested
 
 const SETTINGS_PATH := "user://settings.cfg"
 
@@ -62,7 +63,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("menu"):
 		capture_mouse(Input.mouse_mode != Input.MOUSE_MODE_CAPTURED)
 	elif event.is_action_pressed("reset"):
-		reset()
+		if reset_requested.get_connections().is_empty():
+			reset()
+		else:
+			reset_requested.emit()
 
 
 func capture_mouse(on: bool) -> void:
@@ -83,6 +87,12 @@ func reset() -> void:
 	crouched = false
 	height = tuning.stand_height
 	_apply_height()
+
+
+## Small upward view kick (radians), e.g. from rifle recoil.
+func kick(pitch_rad: float) -> void:
+	_pitch = clampf(_pitch + pitch_rad, -deg_to_rad(tuning.pitch_limit_deg), deg_to_rad(tuning.pitch_limit_deg))
+	_head.rotation.x = _pitch
 
 
 func teleport(pos: Vector3, yaw_deg: float) -> void:

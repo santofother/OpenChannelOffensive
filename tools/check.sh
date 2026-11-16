@@ -15,6 +15,10 @@ echo "== graybox controller smoke (walls, crouch clearance, doorway, reset)"
 "$GODOT_BIN" --headless --path game res://scenes/graybox.tscn -- --smoke-graybox --no-steam 2>&1 | tee /tmp/fps_graybox.log | grep -E "PASS|FAIL|SMOKE|SCRIPT ERROR"
 grep -q "SMOKE_OK graybox" /tmp/fps_graybox.log || fail "graybox smoke (see /tmp/fps_graybox.log)"
 
+echo "== combat smoke (rifle, cover, charges, breaches, restart)"
+"$GODOT_BIN" --headless --path game res://scenes/graybox.tscn -- --smoke-combat --no-steam 2>&1 | tee /tmp/fps_combat.log | grep -E "PASS|FAIL|SMOKE|SCRIPT ERROR|ERROR"
+grep -q "SMOKE_OK combat" /tmp/fps_combat.log || fail "combat smoke (see /tmp/fps_combat.log)"
+
 echo "== ENet host+join (2 players)"
 "$GODOT_BIN" --headless --path game -- --smoke-host --no-steam --port=$PORT --name=Host > /tmp/fps_host.log 2>&1 &
 HP=$!; sleep 3
