@@ -2,9 +2,9 @@ extends Node3D
 ## Session 02 graybox: corridor + adjacent room at human scale (1 unit = 1 m).
 ## Corridor x[-1.5,1.4], z[-13,0]; divider wall (centre x=1.5) with doorway, window, reinforced section;
 ## room x[1.6,9.5], z[-9,-2]; low-ceiling duct (1.5 m) from z=-10.5 to the corridor end (standing blocked, crouch passes).
-## F1-F3 fixed comparison cameras, F4 back to player, R reset, Esc releases the mouse.
+## F1-F3 fixed comparison cameras, F4 back to player, T restart, Esc releases the mouse.
 ## Session 03: divider modules B (reinforced), C and D1 (ordinary) are breachable WallModules; practice targets in the room.
-## Keys: 1/2/3 rifle/ordinary charge/heavy charge, LMB fire/place, RMB aim, T reload, R restart (full reset).
+## Keys: 1/2/3 rifle/ordinary charge/heavy charge, LMB fire/place, RMB aim, R reload, T restart (full reset).
 ## Headless tests: godot --headless --path game res://scenes/graybox.tscn -- --smoke-graybox | --smoke-combat
 
 const PLAYER_SCENE := preload("res://scenes/player.tscn")
@@ -281,7 +281,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _process(_delta: float) -> void:
 	var v := player.velocity
-	_hud.text = "WASD move · Shift sprint · C crouch · LMB fire/place · RMB aim · T reload · 1 rifle 2 ordinary charge 3 heavy charge · R restart · Esc mouse · F1-F3 cams, F4 player\nspeed %.1f m/s  %s  height %.2f m  FOV %.0f" % [
+	_hud.text = "WASD move · Shift sprint · C crouch · LMB fire/place · RMB aim · R reload · 1 rifle 2 ordinary charge 3 heavy charge · T restart · Esc mouse · F1-F3 cams, F4 player\nspeed %.1f m/s  %s  height %.2f m  FOV %.0f" % [
 		Vector2(v.x, v.z).length(), "CROUCHED" if player.crouched else "standing", player.height, player.fov]
 
 

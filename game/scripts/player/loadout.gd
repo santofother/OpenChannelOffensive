@@ -1,7 +1,7 @@
 class_name Loadout
 extends Node
 ## Rifle + breach charges for the first-person player, plus its HUD. Offline for now.
-## Keys: 1 rifle, 2 ordinary charge, 3 heavy charge, LMB fire/place, RMB aim, T reload.
+## Keys: 1 rifle, 2 ordinary charge, 3 heavy charge, LMB fire/place, RMB aim, R reload.
 ## Headless tests call fire_rifle()/start_reload()/place_charge()/select() directly.
 
 enum Tool { RIFLE, ORDINARY_CHARGE, HEAVY_CHARGE }
