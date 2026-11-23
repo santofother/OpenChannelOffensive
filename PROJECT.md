@@ -1,6 +1,7 @@
 # Open Channel Offensive — project memory
 
 Updated: November 22, 2026. Status: Session 08 economy/reinforcement implemented and headless-verified (human checks pending); Sessions 01–03 accepted; Session 04 implemented (its human checks were skipped forward by the user and remain open); Sessions 05–06 implemented and headless-verified; Session 07 round loop implemented and locally verified; human playtests pending; a Mac-host/Windows-joiner Steam visibility failure and LAN connection failure were reported (see below).
+**Release 0.2.0** (November 22): all work committed to `main` (af8bbb3) and published as [GitHub release 0.2.0](https://github.com/santofother/OpenChannelOffensive/releases/tag/0.2.0) with debug builds **0.2.0-p21+af8bbb3** (`build/release-0.2.0/`). `tools/check.sh` passed and the packaged Mac app passed the offline smoke test. Windows execution and cross-device Steam remain human checks.
 Protocol 21 (map revision 6) reworks Lightwell stairs, puts the bomb in attackers’ slot 5, holds planted rounds to defuse/explosion, keeps defenders inside during prep, spots defenders outside, carries unused defuse kits and strengthens recoil.
 Protocol 20 adds shared interaction, room-wide planting, health, teammate purchases, walk-over loot, and wall collapse.
 Lightwell revision 5 (protocol 19) moves B upstairs and adds the current round, loot, movement, and bot feedback changes.
