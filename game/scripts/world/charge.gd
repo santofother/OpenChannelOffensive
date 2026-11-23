@@ -27,18 +27,22 @@ func setup(m: WallModule, k: int, fuse: float, pos: Vector3, n: Vector3) -> void
 	normal = n
 	left = fuse
 	var heavy := k == WallModule.Kind.HEAVY
-	var mi := MeshInstance3D.new()
-	var bm := BoxMesh.new()
-	bm.size = Vector3(0.4, 0.3, 0.1) if heavy else Vector3(0.25, 0.18, 0.06)
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.8, 0.1, 0.08) if heavy else Color(0.9, 0.55, 0.1)
-	mat.emission_enabled = true
-	mat.emission = mat.albedo_color
-	mat.emission_energy_multiplier = 0.6
-	bm.material = mat
-	mi.mesh = bm
-	mi.position = Vector3(0, 0, bm.size.z * 0.5)
-	add_child(mi)
+	var model := GearModels.instance("gear/heavy_w" if heavy else "gear/ordinary_w")
+	if model:
+		add_child(model)
+	else:
+		var mi := MeshInstance3D.new()
+		var bm := BoxMesh.new()
+		bm.size = Vector3(0.4, 0.3, 0.1) if heavy else Vector3(0.25, 0.18, 0.06)
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = Color(0.8, 0.1, 0.08) if heavy else Color(0.9, 0.55, 0.1)
+		mat.emission_enabled = true
+		mat.emission = mat.albedo_color
+		mat.emission_energy_multiplier = 0.6
+		bm.material = mat
+		mi.mesh = bm
+		mi.position = Vector3(0, 0, bm.size.z * 0.5)
+		add_child(mi)
 	_label = Label3D.new()
 	_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	_label.no_depth_test = true
@@ -72,6 +76,9 @@ func _process(delta: float) -> void:
 			return
 		module.charge = null
 		module.breach(kind)
+		var doors := get_tree().get_first_node_in_group("door_system")
+		if doors:
+			doors.call("blast", global_position, 1.6 if kind == WallModule.Kind.HEAVY else 1.2)
 		detonated.emit(self)
 		queue_free()
 

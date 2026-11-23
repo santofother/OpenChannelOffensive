@@ -5,3 +5,8 @@ build/
 # credentials / local secrets
 *.key
 .env
+
+# Blender autosave backups / python caches / export-time commit stamp
+*.blend1
+__pycache__/
+game/build_commit.txt

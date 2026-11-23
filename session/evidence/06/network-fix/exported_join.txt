@@ -1,0 +1,57 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[Net] Build 0.1.0-p4+16fa18d
+[UI] Steam disabled (--no-steam)
+[UI] Connecting to 127.0.0.1:24795 ...
+[Net] CONNECTED my_id=900937587
+[UI] Connected (LAN)
+[Net] PEER_CONNECTED 1
+[Match] started host=false id=900937587 sim=0ms±0 loss=0.000 lagcomp=true
+[Match] TEST dropped initial full state
+[Timing] t=96.907 client frame stall 150 ms
+[Match] FULL applied: you=900937587 host=1 remotes=[1] tick=73
+[Match] FIRST SNAP tick=75 round=1
+[Match] FULL applied: you=900937587 host=1 remotes=[1] tick=166
+[Connection report] {
+  "build": "0.1.0-p4+16fa18d",
+  "full_state_received": true,
+  "host": false,
+  "lan_addresses": [
+    "10.0.0.173"
+  ],
+  "last_send_error": "",
+  "local_position": "(6.0, 0.001042, -3.3)",
+  "os": "macOS",
+  "port": 24795,
+  "ready_peers": [],
+  "remote_view": {
+    "1": {
+      "alive": true,
+      "buffered_snapshots": 9,
+      "height": 1.79999995231628,
+      "pos": "(0.0, 0.001042, -1.0)",
+      "render_pos": "(0.0, 0.001042, -1.0)",
+      "scale": "(1.0, 1.0, 1.0)",
+      "team": 0,
+      "visible_meshes": 17
+    }
+  },
+  "roster": {
+    "1": "Player",
+    "900937587": "Player"
+  },
+  "round": 2,
+  "snapshot_age_ms": 22,
+  "snapshot_count": 40,
+  "steam_channels": 4,
+  "transport": "LAN",
+  "you": 900937587
+}
+[Match] FULL applied: you=900937587 host=1 remotes=[1] tick=503
+[Match] FULL applied: you=900937587 host=1 remotes=[1] tick=540
+[Match] FULL applied: you=900937587 host=1 remotes=[1] tick=737
+[Net] PEER_DISCONNECTED 1
+[Net] Session ended: Host left the game
+[Match] session ended: Host left the game
+[UI] Host left the game
+SMOKE_OK host-left reason='Host left the game'

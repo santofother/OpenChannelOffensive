@@ -69,12 +69,13 @@ static func build_lights(g: Node3D) -> void:
 static func build_dressing(g: Node3D) -> void:
 	var trim := "trim"
 	# Baseboards on non-breachable runs only (a floating skirting strip after a breach would look wrong).
-	_deco(g, "Base_CorridorW", Vector3(-1.5, 0, -0.1), Vector3(-1.48, 0.1, -13.0), trim)
-	_deco(g, "Base_DividerA", Vector3(1.38, 0, -0.1), Vector3(1.4, 0.1, -2.0), trim)
-	_deco(g, "Base_DividerD2", Vector3(1.38, 0, -9.0), Vector3(1.4, 0.1, -10.5), trim)
+	if not g.net_mode:
+		_deco(g, "Base_CorridorW", Vector3(-1.5, 0, -0.1), Vector3(-1.48, 0.1, -13.0), trim)
+		_deco(g, "Base_DividerA", Vector3(1.38, 0, -0.1), Vector3(1.4, 0.1, -2.0), trim)
+		_deco(g, "Base_DividerD2", Vector3(1.38, 0, -9.0), Vector3(1.4, 0.1, -10.5), trim)
 	# Doorway frame (z -3.5..-4.5, h 2.1) and interior window frame (z -6.3..-7.5, y 1..2).
 	_frame(g, "DoorFrame", 1.5, -3.5, -4.5, 0.0, 2.1, false)
-	_frame(g, "WindowFrame", 1.5, -6.3, -7.5, 1.0, 2.0, true)
+	_frame(g, "WindowFrame", 1.5, -6.3, -7.5, 0.0 if g.net_mode else 1.0, 2.0, not g.net_mode)
 	# Corridor: notice board, vent, plant.
 	_deco(g, "NoticeFrame", Vector3(-1.5, 1.0, -4.2), Vector3(-1.47, 1.9, -5.6), trim)
 	_deco(g, "NoticeCork", Vector3(-1.47, 1.04, -4.24), Vector3(-1.46, 1.86, -5.56), "cork")

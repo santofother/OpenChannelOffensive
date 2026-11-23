@@ -1,0 +1,10 @@
+{
+  "doors_walked_both_faces": 18,
+  "failures": 0,
+  "map": "lightwell/v1/98c8d84564097a7dc9b71cd96dc16290fa23d76d540a7e74b5752b635ae56097",
+  "plant_pocket_samples": 66,
+  "reset_iterations": 10,
+  "settled_nodes": 728,
+  "spawn_slots": 6,
+  "wall_cells": 161
+}

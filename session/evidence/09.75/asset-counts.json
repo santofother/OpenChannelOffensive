@@ -1,0 +1,154 @@
+[
+	{
+		"asset": "weapons/carbine",
+		"triangles": 10350
+	},
+	{
+		"asset": "weapons/carbine_w",
+		"triangles": 2762
+	},
+	{
+		"asset": "weapons/hands",
+		"triangles": 41340
+	},
+	{
+		"asset": "weapons/marksman",
+		"triangles": 16862
+	},
+	{
+		"asset": "weapons/marksman_w",
+		"triangles": 2756
+	},
+	{
+		"asset": "weapons/p9",
+		"triangles": 3442
+	},
+	{
+		"asset": "weapons/p9_match",
+		"triangles": 5482
+	},
+	{
+		"asset": "weapons/p9_match_w",
+		"triangles": 2800
+	},
+	{
+		"asset": "weapons/p9_w",
+		"triangles": 2800
+	},
+	{
+		"asset": "weapons/revolver",
+		"triangles": 3800
+	},
+	{
+		"asset": "weapons/revolver_w",
+		"triangles": 2800
+	},
+	{
+		"asset": "weapons/service_rifle",
+		"triangles": 13428
+	},
+	{
+		"asset": "weapons/service_rifle_w",
+		"triangles": 2754
+	},
+	{
+		"asset": "weapons/smg",
+		"triangles": 7802
+	},
+	{
+		"asset": "weapons/smg_w",
+		"triangles": 2800
+	},
+	{
+		"asset": "gear/heavy",
+		"triangles": 3996
+	},
+	{
+		"asset": "gear/heavy_w",
+		"triangles": 2800
+	},
+	{
+		"asset": "gear/kit",
+		"triangles": 2868
+	},
+	{
+		"asset": "gear/kit_w",
+		"triangles": 2800
+	},
+	{
+		"asset": "gear/medkit",
+		"triangles": 952
+	},
+	{
+		"asset": "gear/medkit_w",
+		"triangles": 952
+	},
+	{
+		"asset": "gear/ordinary",
+		"triangles": 2516
+	},
+	{
+		"asset": "gear/ordinary_w",
+		"triangles": 2516
+	},
+	{
+		"asset": "gear/reinforced_panel",
+		"triangles": 980
+	},
+	{
+		"asset": "grenades/flash",
+		"triangles": 1416
+	},
+	{
+		"asset": "grenades/flash_w",
+		"triangles": 1416
+	},
+	{
+		"asset": "grenades/frag",
+		"triangles": 1114
+	},
+	{
+		"asset": "grenades/frag_w",
+		"triangles": 1114
+	},
+	{
+		"asset": "grenades/incendiary",
+		"triangles": 1172
+	},
+	{
+		"asset": "grenades/incendiary_w",
+		"triangles": 1172
+	},
+	{
+		"asset": "grenades/smoke",
+		"triangles": 1200
+	},
+	{
+		"asset": "grenades/smoke_w",
+		"triangles": 1200
+	},
+	{
+		"asset": "attachments/flashlight",
+		"triangles": 1386
+	},
+	{
+		"asset": "attachments/laser",
+		"triangles": 674
+	},
+	{
+		"asset": "attachments/nvg",
+		"triangles": 1880
+	},
+	{
+		"asset": "wearables/helmet",
+		"triangles": 618
+	},
+	{
+		"asset": "wearables/operator",
+		"triangles": 3072
+	},
+	{
+		"asset": "wearables/vest",
+		"triangles": 1868
+	}
+]

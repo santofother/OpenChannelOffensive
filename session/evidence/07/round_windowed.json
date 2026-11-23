@@ -1,0 +1,38 @@
+{
+  "build": "0.1.0-p5+16fa18d",
+  "clients": {},
+  "conditions": {
+    "sim_jitter_ms": 0.0,
+    "sim_latency_ms_one_way_each_side": 0.0,
+    "sim_loss": 0.0,
+    "transport": "ENet localhost, macOS, one machine"
+  },
+  "date": "2026-11-16T16:20:37",
+  "failures": 0,
+  "host": {
+    "budget_drops": 0,
+    "cmds": 4920,
+    "down_Bps": 11885.0606489961,
+    "dup_cmds": 9465,
+    "rewind_ticks_max": 0.0,
+    "rewind_ticks_mean": 0.0,
+    "secs": 28.937,
+    "sim_us_max": 11213.0,
+    "sim_us_mean": 354.04161849711,
+    "sim_us_p95": 662.0,
+    "sim_us_p99": 887.0,
+    "stale_round_cmds": 42,
+    "starved_slot_ticks": 237,
+    "ticks": 1730,
+    "up_Bps": 25509.6934720254
+  },
+  "players": 2,
+  "results": {
+    "rounds": {
+      "failures": 0,
+      "full_match": true,
+      "players": 3,
+      "rematch": true
+    }
+  }
+}

@@ -236,10 +236,10 @@ class Part:
         mi = self._mi(mat)
         vmap = {}
         for v in bm.verts:
-            vmap[v.index] = self.bm.verts.new(M @ v.co)
+            vmap[v] = self.bm.verts.new(M @ v.co)
         bm.verts.index_update()
         for f in bm.faces:
-            vs = [vmap[v.index] for v in f.verts]
+            vs = [vmap[v] for v in f.verts]
             if flip:
                 vs.reverse()
             try:
@@ -379,9 +379,9 @@ class Part:
         vmap = {}
         other.bm.verts.index_update()
         for v in other.bm.verts:
-            vmap[v.index] = self.bm.verts.new(M @ v.co)
+            vmap[v] = self.bm.verts.new(M @ v.co)
         for f in other.bm.faces:
-            vs = [vmap[v.index] for v in f.verts]
+            vs = [vmap[v] for v in f.verts]
             if flip:
                 vs.reverse()
             try:

@@ -1,0 +1,12 @@
+{
+  "attack_zones": 7,
+  "doors_walked_both_faces": 31,
+  "exposed_door_rays": 0,
+  "failures": 0,
+  "map": "lightwell/v3/0a2afb84393ddb2f8877ae8227631e6b5f3693bcfa3d5abefef57b934a5f272d",
+  "plant_pocket_samples": 66,
+  "reset_iterations": 10,
+  "settled_nodes": 1385,
+  "spawn_slots": 24,
+  "wall_cells": 236
+}

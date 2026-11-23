@@ -29,7 +29,10 @@ func _ready() -> void:
 	NetworkManager.hosting_started.connect(_on_hosting_started)
 	NetworkManager.roster_changed.connect(_maybe_enter_as_client)
 	var a := NetworkManager.args
-	if a.has("capture") or a.has("bench"):
+	if a.has("capture-lightwell") or a.has("smoke-lightwell") or a.has("smoke-destruction"):
+		get_tree().change_scene_to_file.call_deferred(MapRegistry.SCENES["lightwell"])
+		return
+	if a.has("capture") or a.has("bench") or a.has("gear-capture"):
 		get_tree().change_scene_to_file.call_deferred("res://scenes/graybox.tscn")
 		return
 	if a.has("smoke-offline"):
@@ -88,7 +91,7 @@ func _enter_match() -> void:
 	if _entering:
 		return
 	_entering = true
-	get_tree().change_scene_to_file.call_deferred("res://scenes/graybox.tscn")
+	get_tree().change_scene_to_file.call_deferred(MapRegistry.SCENES[NetworkManager.selected_map])
 
 
 func _process(delta: float) -> void:
@@ -148,20 +151,40 @@ func _box(size: Vector3, pos: Vector3, color: Color) -> void:
 func _build_ui() -> void:
 	var layer := CanvasLayer.new()
 	add_child(layer)
+	var scroll := ScrollContainer.new()
+	scroll.anchor_bottom = 1.0
+	scroll.offset_left = 12
+	scroll.offset_top = 12
+	scroll.offset_right = 570
+	scroll.offset_bottom = -12
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	layer.add_child(scroll)
 	var panel := PanelContainer.new()
-	panel.position = Vector2(12, 12)
-	layer.add_child(panel)
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(panel)
 	var box := VBoxContainer.new()
 	box.custom_minimum_size = Vector2(340, 0)
 	panel.add_child(box)
 	var title := Label.new()
-	title.text = "Open Channel Offensive — M0 (build %s)" % NetworkManager.build_id
+	title.text = "Open Channel Offensive (build %s)" % NetworkManager.build_id
 	box.add_child(title)
 	_name_edit = LineEdit.new()
 	_name_edit.text = NetworkManager.local_name
 	_name_edit.placeholder_text = "Your name"
 	_name_edit.text_changed.connect(func(t: String) -> void: NetworkManager.local_name = t)
 	box.add_child(_name_edit)
+	_button(box, "Explore Lightwell (offline)", func() -> void:
+		NetworkManager.leave("Left to explore Lightwell")
+		get_tree().change_scene_to_file(MapRegistry.SCENES["lightwell"]))
+	var bots := CheckBox.new()
+	bots.text = "Fill empty team slots with bots (host)"
+	bots.button_pressed = NetworkManager.fill_bots
+	bots.toggled.connect(func(on: bool) -> void: NetworkManager.fill_bots = on)
+	box.add_child(bots)
+	_button(box, "Play vs bots (Lightwell, solo host)", func() -> void:
+		NetworkManager.fill_bots = true
+		bots.set_pressed_no_signal(true)
+		NetworkManager.host_enet())
 	_button(box, "Host (Steam)", func() -> void: SteamManager.host_lobby())
 	_button(box, "Refresh Steam lobbies", func() -> void: SteamManager.request_lobby_list())
 	_lobby_list = ItemList.new()
@@ -169,14 +192,24 @@ func _build_ui() -> void:
 	box.add_child(_lobby_list)
 	_button(box, "Join selected lobby", _join_selected)
 	_ip_edit = LineEdit.new()
-	_ip_edit.text = "127.0.0.1"
+	_ip_edit.placeholder_text = "Host LAN IP (127.0.0.1 = this computer only)"
 	box.add_child(_ip_edit)
-	_button(box, "Host (ENet local test)", func() -> void: NetworkManager.host_enet())
-	_button(box, "Join (ENet local test)", func() -> void: NetworkManager.join_enet(_ip_edit.text))
+	_button(box, "Host (LAN)", func() -> void: NetworkManager.host_enet())
+	_button(box, "Join (LAN)", func() -> void: NetworkManager.join_enet(_ip_edit.text))
+	var lan_hint := Label.new()
+	lan_hint.text = "Host map: Lightwell · two sites / courtyard\nLAN: same network/VPN. Steam: Internet play.\nAllow the host through its firewall (UDP %d)." % NetworkManager.DEFAULT_PORT
+	box.add_child(lan_hint)
 	_button(box, "Leave", func() -> void: NetworkManager.leave())
+	_button(box, "Copy connection report", func() -> void:
+		DisplayServer.clipboard_set("Build: %s\nMode: %s\nStatus: %s\n%s" % [NetworkManager.build_id, NetworkManager.mode_name(), _status.text, NetworkManager.lan_help()]))
 	_button(box, "Office visual slice (offline)", func() -> void:
 		NetworkManager.leave("Left to play offline")
 		get_tree().change_scene_to_file("res://scenes/graybox.tscn"))
+	var controls := ControlsPanel.new()
+	controls.visible = false
+	controls.position = Vector2(590, 12)
+	layer.add_child(controls)
+	_button(box, "Controls (rebind keys)", func() -> void: controls.visible = not controls.visible)
 	_status = Label.new()
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(_status)

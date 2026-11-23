@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[Net] Build 0.1.0-p3+16fa18d
+[UI] Steam disabled (--no-steam)
+[UI] Connecting to 127.0.0.1:24782 ...
+[Net] CONNECTED my_id=948325205
+[UI] Connected (ENet (local test))
+[Net] PEER_CONNECTED 1
+[Match] started host=false id=948325205 sim=0ms±0 loss=0.000 lagcomp=true
+[Timing] t=515.913 client frame stall 150 ms
+[Net] PEER_DISCONNECTED 1
+[Net] Session ended: Host left the game
+[Match] session ended: Host left the game
+[UI] Host left the game
+SMOKE_OK host-left reason='Host left the game'

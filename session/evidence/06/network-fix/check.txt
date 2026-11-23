@@ -1,0 +1,105 @@
+== import/parse
+== voice codec, jitter queue and recipient rules
+  PASS voice: codec size / quality
+  PASS voice: codec exact length 1
+  PASS voice: codec exact length 2
+  PASS voice: codec exact length 3
+  PASS voice: codec exact length 7
+  PASS voice: codec exact length 160
+  PASS voice: codec exact length 319
+  PASS voice: malformed codec rejected
+  PASS voice: malformed codec rejected
+  PASS voice: malformed codec rejected
+  PASS voice: malformed codec rejected
+  PASS voice: device resample 8000 Hz -> one 20ms packet
+  PASS voice: device resample 16000 Hz -> one 20ms packet
+  PASS voice: device resample 44100 Hz -> one 20ms packet
+  PASS voice: device resample 48000 Hz -> one 20ms packet
+  PASS voice: lifecycle discards incomplete old speech
+  PASS voice: new speech begins with new samples
+  PASS voice: duplicate ignored
+  PASS voice: prebuffer
+  PASS voice: reorder in sequence
+  PASS voice: loss concealed
+  PASS voice: late discarded
+  PASS voice: queue cap
+  PASS voice: invalid queue frame
+  PASS voice: idle spurt rebuffer
+  PASS voice: nearby enemy hears open speech
+  PASS voice: distant teammate has no open packets
+  PASS voice: held radio reaches teammate
+  PASS voice: distant enemy unauthorized
+  PASS voice: theft receives original channel
+  PASS voice: stolen radio cannot impersonate
+  PASS voice: radio and proximity deduplicate
+  PASS voice: wall shortens proximity
+  PASS voice: dead cannot speak to living
+  PASS voice: living cannot speak to dead
+  PASS voice: dead team isolated
+  PASS voice: dead enemy isolated
+  PASS voice: handset experiment opt in
+  PASS voice: side swap recomputes channel
+  PASS voice: headless never captures
+SMOKE_OK voice
+== offline smoke
+== graybox controller smoke (walls, crouch clearance, doorway, reset)
+  PASS spawns on floor (0.0, -0.0, -1.0)
+  PASS east wall blocks x=1.05
+  PASS west wall blocks x=-1.15
+  PASS reset returns to spawn
+  PASS standing blocked by low ceiling z=-10.16
+  PASS crouch passes under duct z=-12.65 h=1.20
+  PASS stays crouched under ceiling h=1.20
+  PASS stands again once clear z=-2.59 h=1.80
+  PASS doorway passable x=3.65
+  PASS reinforced section blocks x=0.98
+  PASS window sill blocks walking x=1.05
+  PASS standing eye height ~1.65 m eye=1.65
+SMOKE_OK graybox
+== combat smoke (rifle, cover, charges, breaches, restart)
+  PASS starts with full mag
+  PASS rifle hits target
+  PASS hit does damage + marker
+  PASS fire rate gate
+  PASS 5 hits down the target
+  PASS plaster wall shot penetrates, leaves one bounded mark pen=1 marks=1
+  PASS reload starts
+  PASS cannot fire while reloading
+  PASS reload fills mag from reserve mag=30 res=84
+  PASS dry fire does nothing
+  PASS standing shot clears crate, hits target
+  PASS crouched behind crate: muzzle blocked collider=Crate_1_0m
+  PASS barrel against wall: blocked at wall
+  PASS tool/material table
+  PASS modules start intact, 1 part
+  PASS ordinary charge rejected on reinforced Wrong tool: reinforced wall needs the heavy charge
+  PASS heavy charge rejected on ordinary Wrong tool: ordinary wall needs the ordinary charge
+  PASS too far rejected Too far: aim at a wall within 1.5 m
+  PASS non-breachable wall rejected Can't breach this surface
+  PASS ordinary charge placed
+  PASS second charge on same panel rejected Charge already placed here
+  PASS countdown running, panel still intact
+  PASS panel breached after fuse
+  PASS breached panel: mesh and collision agree
+  PASS ordinary panel can't be breached twice
+  PASS already breached rejected Already breached
+  PASS opening is clear, jambs and lintel remain
+  PASS player walks through the opening x=6.65
+  PASS heavy charge placed on reinforced
+  PASS reinforced panel breached
+  PASS player walks through reinforced opening x=6.90
+  PASS effects capped active=3 children=3
+  PASS restart: panels intact
+  PASS restart: targets restored
+  PASS restart: loadout restored
+  PASS restart: marks and effects cleared
+  PASS restart: player at spawn
+  PASS restart: wall blocks again x=1.05
+SMOKE_OK combat
+== ENet host+join (2 players)
+== incompatible build rejected clearly
+SMOKE_REJECTED Can't join: host build is 0.1.0-p4+16fa18d, yours is bogus. Both need the same download.
+./tools/check.sh: line 40: 55473 Terminated: 15          "$GODOT_BIN" --headless --path game -- --smoke-host --want=9 --no-steam --port=$PORT > /tmp/fps_host2.log 2>&1
+== networked match (host + client + late joiner: prediction, hits, penetration, charges, resets, leave)
+NET TEST PASSED (2 players, late=1, )
+ALL CHECKS PASSED

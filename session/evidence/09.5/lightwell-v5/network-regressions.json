@@ -1,0 +1,111 @@
+{
+  "build": "0.1.0-p19+83eb05f",
+  "clients": {
+    "783947310": {
+      "corr_max_m": 0.599999904632568,
+      "corr_mean_m": 0.599999904632568,
+      "corrections": 1,
+      "down_Bps": 11146.0526736856,
+      "rtt_mean_ms": 9.61803845258859,
+      "rtt_p95_ms": 14.7849998474121,
+      "sim_dropped": 0,
+      "snaps": 1875,
+      "stale_events": 4,
+      "stale_snaps": 0,
+      "up_Bps": 7379.66014912477
+    }
+  },
+  "conditions": {
+    "sim_jitter_ms": 0.0,
+    "sim_latency_ms_one_way_each_side": 0.0,
+    "sim_loss": 0.0,
+    "transport": "ENet localhost, headless, one machine"
+  },
+  "date": "2026-11-21T12:22:33",
+  "failures": 0,
+  "host": {
+    "budget_drops": 0,
+    "cmds": 13495,
+    "down_Bps": 9927.00501253133,
+    "dup_cmds": 23061,
+    "rewind_ticks_max": 8.0,
+    "rewind_ticks_mean": 6.46875,
+    "secs": 95.76,
+    "sim_us_max": 7167.0,
+    "sim_us_mean": 177.619735468152,
+    "sim_us_p95": 333.0,
+    "sim_us_p99": 418.0,
+    "stale_round_cmds": 53,
+    "starved_slot_ticks": 390,
+    "ticks": 5746,
+    "up_Bps": 15655.2736006683
+  },
+  "players": 2,
+  "results": {
+    "moving_hits_lagcomp_off": 9,
+    "moving_hits_lagcomp_on": 12,
+    "node_counts_per_reset": [
+      {
+        "1": 725,
+        "783947310": 779,
+        "849877175": 717
+      },
+      {
+        "1": 725,
+        "783947310": 779,
+        "849877175": 717
+      },
+      {
+        "1": 725,
+        "783947310": 779,
+        "849877175": 717
+      }
+    ],
+    "voice_load": {
+      "actual_mouth_to_ear": "requires microphone/device test",
+      "codec_bytes_per_20ms": 163,
+      "host_wire_up_Bps_including_gameplay": 22632.3319027182,
+      "queue_ms": 60,
+      "seconds": 2.097,
+      "talkers": 2
+    },
+    "voice_radio_recipient_counts": {
+      "1": {
+        "bot_radio": 1,
+        "enet_throttle": {
+          "783947310": 32.0
+        },
+        "epoch": 8,
+        "invalid": 0,
+        "muted_enemy": false,
+        "pending": 0,
+        "pickups": 0,
+        "received": {},
+        "relays": {
+          "783947310": 25
+        },
+        "rpc_count": 0,
+        "sim_drops": 0,
+        "speakers": 0,
+        "stolen": {}
+      },
+      "783947310": {
+        "bot_radio": 0,
+        "enet_throttle": {},
+        "epoch": 8,
+        "invalid": 0,
+        "muted_enemy": false,
+        "pending": 0,
+        "pickups": 0,
+        "received": {
+          "1": 25
+        },
+        "relays": {},
+        "rpc_count": 25,
+        "sim_drops": 0,
+        "speakers": 0,
+        "stolen": {}
+      }
+    }
+  }
+}

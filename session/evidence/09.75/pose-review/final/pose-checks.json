@@ -1,0 +1,65 @@
+[
+	{
+		"centered": true,
+		"shot": "p9_ads",
+		"sight_at_eye": [
+			-0.000000655651092529297,
+			-0.000000357627868652344,
+			-0.419999986886978
+		]
+	},
+	{
+		"centered": true,
+		"shot": "p9_match_ads",
+		"sight_at_eye": [
+			0.0,
+			-0.000000119209289550781,
+			-0.420000046491623
+		]
+	},
+	{
+		"centered": true,
+		"shot": "revolver_ads",
+		"sight_at_eye": [
+			0.0,
+			-0.000000119209289550781,
+			-0.419999927282333
+		]
+	},
+	{
+		"centered": true,
+		"shot": "smg_ads",
+		"sight_at_eye": [
+			-0.0000000596046447753906,
+			0.0,
+			-0.229999989271164
+		]
+	},
+	{
+		"centered": true,
+		"shot": "carbine_ads",
+		"sight_at_eye": [
+			-0.0000000596046447753906,
+			0.000000119209289550781,
+			-0.239999979734421
+		]
+	},
+	{
+		"centered": true,
+		"shot": "service_rifle_ads",
+		"sight_at_eye": [
+			0.0,
+			0.0,
+			-0.239999979734421
+		]
+	},
+	{
+		"centered": true,
+		"shot": "marksman_ads",
+		"sight_at_eye": [
+			0.0,
+			0.0,
+			-0.0849999487400055
+		]
+	}
+]

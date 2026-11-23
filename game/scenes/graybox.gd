@@ -1,103 +1,45 @@
-extends Node3D
-## Session 02 graybox: corridor + adjacent room at human scale (1 unit = 1 m).
-## Corridor x[-1.5,1.4], z[-13,0]; divider wall (centre x=1.5) with doorway, window, reinforced section;
-## room x[1.6,9.5], z[-9,-2]; low-ceiling duct (1.5 m) from z=-10.5 to the corridor end (standing blocked, crouch passes).
-## F1-F3 fixed comparison cameras, F4 back to player, T restart, Esc releases the mouse.
-## Session 04: PBR palette (Surfaces), lighting/dressing/exterior (OfficeSet), viewmodel, --capture / --bench (SliceBench).
-## Session 03: divider modules B (reinforced), C and D1 (ordinary) are breachable WallModules; practice targets in the room.
-## Keys: 1/2/3 rifle/ordinary charge/heavy charge, LMB fire/place, RMB aim, R reload, T restart (full reset).
-## Evidence (windowed): -- --capture[=dir] | --bench[=secs] [--bench-out=path] [--vsync]
-## Headless tests: godot --headless --path game res://scenes/graybox.tscn -- --smoke-graybox | --smoke-combat
-
-const PLAYER_SCENE := preload("res://scenes/player.tscn")
+extends "res://scripts/world/match_scene.gd"
+## Original office demo and its regression fixtures.
 const CEIL := 2.8
-const DUCT_Z := -10.5 ## bulkhead face; ceiling drops to DUCT_H beyond it
+const DUCT_Z := -10.5
 const DUCT_H := 1.5
 
-const WEAPON_TUNING := preload("res://data/weapon_tuning.tres")
-## Surfaces rifle rounds pass through (damage multiplier), bounded by Ballistics thickness/surface limits.
-const PEN_MULT := {"plaster": 0.5, "glass": 0.85}
-
-var player: Player
-var loadout: Loadout
-var modules: Array[WallModule] = []
-var targets: Array[PracticeTarget] = []
-var net: NetMatch ## set when this scene runs inside a network session
-var net_mode := false
-var _leaving := false
-var _spawn: Marker3D
-var _cams: Array[Camera3D] = []
-var _hud: Label
-var _panel: PanelContainer
-var _sens: HSlider
-var _fov: HSlider
-var _fails := 0
-
-
-func _ready() -> void:
-	net_mode = NetworkManager.is_in_session() and not NetworkManager.args.has("smoke-graybox") \
-		and not NetworkManager.args.has("smoke-combat")
-	_build_environment()
-	_build_level()
-	_spawn = Marker3D.new()
-	_spawn.name = "PlayerSpawn"
-	_spawn.position = Vector3(0, 0.05, -1.0)
-	add_child(_spawn)
-	player = PLAYER_SCENE.instantiate()
-	add_child(player)
-	player.global_transform = _spawn.global_transform
-	player.spawn_transform = _spawn.global_transform
-	player.reset_requested.connect(restart)
-	_build_cameras()
-	_build_ui()
-	loadout = Loadout.new()
-	loadout.name = "Loadout"
-	add_child(loadout)
-	loadout.setup(player, self, WEAPON_TUNING.duplicate())
-	for m in modules:
-		m.state_changed.connect(loadout.on_module_changed)
-	if DisplayServer.get_name() != "headless" and not NetworkManager.args.has("capture"):
-		_warm_up_graphics()
+func _start_tools() -> bool:
 	if net_mode:
-		net = NetMatch.new()
-		add_child(net)
-		net.start(self)
-		NetworkManager.session_ended.connect(_on_session_ended)
-		if NetworkManager.args.has("net-test"):
-			player.scripted = true
-			loadout.bot = true
-			var nt := NetTest.new()
-			add_child(nt)
-			nt.start(self)
-			return
-		player.mouse_capture_changed.connect(_on_capture)
-		player.capture_mouse(true)
+		if not NetworkManager.args.has("net-test"):
+			return false
+		player.scripted = true
+		loadout.bot = true
+		loadout.use_recoil = false
+		var nt := NetTest.new()
+		add_child(nt)
+		nt.start(self)
 	elif NetworkManager.args.has("smoke-graybox"):
 		player.scripted = true
 		_run_smoke()
 	elif NetworkManager.args.has("smoke-combat"):
+		loadout.use_recoil = false
 		player.scripted = true
 		_run_smoke_combat()
+	elif NetworkManager.args.has("gear-capture"):
+		var gc := GearCapture.new()
+		add_child(gc)
+		gc.start(self)
 	elif NetworkManager.args.has("capture") or NetworkManager.args.has("bench"):
 		var bench := SliceBench.new()
-		bench.name = "SliceBench"
 		add_child(bench)
 		bench.start(self)
 	else:
-		player.mouse_capture_changed.connect(_on_capture)
-		player.capture_mouse(true)
-
-
-# ---------------------------------------------------------------- level
-
-func _build_environment() -> void:
-	OfficeSet.build_environment(self)
+		return false
+	return true
 
 
 func _build_level() -> void:
 	var ORDINARY := Surfaces.get_mat("plaster")
 	var REINFORCED := Surfaces.get_mat("metal_plate")
 	_box("Floor", Vector3(-1.7, -0.2, -13.2), Vector3(9.7, 0.0, 0.2), Surfaces.get_mat("carpet"))
+	if net_mode:
+		_box("ExteriorWalkway", Vector3(-5, -0.2, -17), Vector3(13, -0.01, 4), Surfaces.get_mat("asphalt"))
 	# Ceilings: corridor, room, and the low duct (bulkhead + low slab). Roof seals everything from moonlight.
 	var ceil_m := Surfaces.get_mat("ceiling")
 	_box("CeilingCorridor", Vector3(-1.5, CEIL, DUCT_Z), Vector3(1.5, CEIL + 0.2, 0.0), ceil_m)
@@ -113,7 +55,8 @@ func _build_level() -> void:
 	_wall_x("Divider_B_reinforced", 1.5, -2.0, -3.5, 0.34, 0.0, CEIL, REINFORCED, WallModule.Mat.REINFORCED)
 	_wall_x("Doorway_lintel", 1.5, -3.5, -4.5, 0.2, 2.1, CEIL, ORDINARY)
 	_wall_x("Divider_C_ordinary", 1.5, -4.5, -6.3, 0.2, 0.0, CEIL, ORDINARY, WallModule.Mat.ORDINARY)
-	_wall_x("Window_sill", 1.5, -6.3, -7.5, 0.2, 0.0, 1.0, ORDINARY)
+	if not net_mode:
+		_wall_x("Window_sill", 1.5, -6.3, -7.5, 0.2, 0.0, 1.0, ORDINARY)
 	_wall_x("Window_lintel", 1.5, -6.3, -7.5, 0.2, 2.0, CEIL, ORDINARY)
 	_wall_x("Divider_D1_ordinary", 1.5, -7.5, -9.0, 0.2, 0.0, CEIL, ORDINARY, WallModule.Mat.ORDINARY)
 	_wall_x("Divider_D2_ordinary", 1.5, -9.0, -13.0, 0.2, 0.0, CEIL, ORDINARY)
@@ -132,11 +75,12 @@ func _build_level() -> void:
 		_box("Mullion_%d" % i, Vector3(9.55, 0.9, z + 0.04), Vector3(9.65, 2.3, z - 0.04), Surfaces.get_mat("trim"))
 	_box("Glass_exterior", Vector3(9.59, 0.9, -3.0), Vector3(9.61, 2.3, -8.0), Surfaces.get_mat("glass"))
 	# Scale references: operator stand-in (1.8 m class) in the room and a 1.0 m equipment case.
-	_box("ScaleFigure_1.8m", Vector3(7.0, 0.0, -5.0), Vector3(7.5, 1.8, -5.5), null)
-	var fig := StandIn.build(StandIn.TEAM_BLUE)
-	fig.position = Vector3(7.25, 0.0, -5.25)
-	fig.rotation.y = deg_to_rad(110)
-	add_child(fig)
+	if not net_mode:
+		_box("ScaleFigure_1.8m", Vector3(7.0, 0.0, -5.0), Vector3(7.5, 1.8, -5.5), null)
+		var fig := StandIn.build(StandIn.TEAM_BLUE)
+		fig.position = Vector3(7.25, 0.0, -5.25)
+		fig.rotation.y = deg_to_rad(110)
+		add_child(fig)
 	_box("Crate_1.0m", Vector3(4.0, 0.0, -3.0), Vector3(5.0, 1.0, -4.0), Surfaces.get_mat("case"))
 	# Practice targets in the room (x=8.4, facing the divider) and one by the corridor wall facing the corridor.
 	# Offline only: in a session the other players are the targets.
@@ -155,6 +99,8 @@ func _build_level() -> void:
 func _wall_x(wall_name: String, x: float, z0: float, z1: float, thick: float, y0: float, y1: float, col: Material, mat: int = -1) -> void:
 	var a := Vector3(x - thick * 0.5, y0, z1)
 	var b := Vector3(x + thick * 0.5, y1, z0)
+	if net_mode and mat < 0:
+		mat = WallModule.Mat.ORDINARY
 	if mat >= 0:
 		_module(wall_name, a, b, mat, col)
 	else:
@@ -163,71 +109,12 @@ func _wall_x(wall_name: String, x: float, z0: float, z1: float, thick: float, y0
 
 ## Wall running along X at fixed z (centre line), spanning x0..x1.
 func _wall_z(wall_name: String, z: float, x0: float, x1: float, thick: float, y0: float, y1: float, col: Material) -> void:
-	_box(wall_name, Vector3(x0, y0, z - thick * 0.5), Vector3(x1, y1, z + thick * 0.5), col)
-
-
-func _module(id: String, a: Vector3, b: Vector3, mat: int, col: Material) -> void:
-	var m := WallModule.new()
-	m.setup(id, a, b, mat, col)
-	add_child(m)
-	modules.append(m)
-
-
-## Full round restart: player, wall panels, targets, ammo/charges, marks and effects.
-## In a session only the host restarts (new round id for everyone).
-func restart() -> void:
-	if net:
-		if net.is_host:
-			net.restart_round()
-		else:
-			loadout.say("Only the host can restart the round")
-		return
-	player.reset()
-	for m in modules:
-		m.reset()
-	for t in targets:
-		t.reset()
-	loadout.reset()
-
-
-## Axis-aligned box from min corner a to max corner b (any order); static collision + mesh.
-## `mat` null = invisible collider (used under stand-ins); `collide` false = decoration only.
-func _box(box_name: String, a: Vector3, b: Vector3, mat: Material, collide: bool = true) -> Node3D:
-	var lo := Vector3(minf(a.x, b.x), minf(a.y, b.y), minf(a.z, b.z))
-	var hi := Vector3(maxf(a.x, b.x), maxf(a.y, b.y), maxf(a.z, b.z))
-	var size := hi - lo
-	if size.x <= 0.0 or size.y <= 0.0 or size.z <= 0.0:
-		return null
-	var body: Node3D
-	if collide:
-		var sb := StaticBody3D.new()
-		sb.collision_layer = 1
-		sb.collision_mask = 0
-		for k: String in PEN_MULT:
-			if mat != null and mat == Surfaces.get_mat(k):
-				sb.set_meta("pen_mult", PEN_MULT[k])
-		var shape := CollisionShape3D.new()
-		var bs := BoxShape3D.new()
-		bs.size = size
-		shape.shape = bs
-		sb.add_child(shape)
-		body = sb
+	if net_mode:
+		_module(wall_name, Vector3(x0, y0, z - thick * 0.5), Vector3(x1, y1, z + thick * 0.5),
+			WallModule.Mat.REINFORCED if thick > 0.3 else WallModule.Mat.ORDINARY, col)
 	else:
-		body = Node3D.new()
-	body.name = box_name
-	body.position = (lo + hi) * 0.5
-	if mat:
-		var mi := MeshInstance3D.new()
-		var bm := BoxMesh.new()
-		bm.size = size
-		bm.material = mat
-		mi.mesh = bm
-		body.add_child(mi)
-	add_child(body)
-	return body
+		_box(wall_name, Vector3(x0, y0, z - thick * 0.5), Vector3(x1, y1, z + thick * 0.5), col)
 
-
-# ---------------------------------------------------------------- cameras / UI
 
 func _build_cameras() -> void:
 	var defs := [
@@ -243,181 +130,6 @@ func _build_cameras() -> void:
 		c.global_position = d[1]
 		c.look_at(d[2])
 		_cams.append(c)
-
-
-func _build_ui() -> void:
-	var layer := CanvasLayer.new()
-	add_child(layer)
-	_hud = Label.new()
-	_hud.position = Vector2(12, 8)
-	_hud.add_theme_color_override("font_shadow_color", Color.BLACK)
-	_hud.add_theme_constant_override("shadow_offset_x", 1)
-	_hud.add_theme_constant_override("shadow_offset_y", 1)
-	layer.add_child(_hud)
-	_panel = PanelContainer.new()
-	_panel.position = Vector2(12, 120)
-	layer.add_child(_panel)
-	var box := VBoxContainer.new()
-	box.custom_minimum_size = Vector2(300, 0)
-	_panel.add_child(box)
-	var t := Label.new()
-	t.text = "Paused — click empty space or Resume to capture mouse"
-	box.add_child(t)
-	_sens = _slider(box, "Sensitivity", 0.1, 3.0, player.look_sensitivity, func(v: float) -> void:
-		player.look_sensitivity = v
-		player.save_settings())
-	_fov = _slider(box, "FOV", player.tuning.min_fov, player.tuning.max_fov, player.fov, func(v: float) -> void:
-		player.set_fov(v)
-		player.save_settings())
-	var resume := Button.new()
-	resume.text = "Resume"
-	resume.pressed.connect(func() -> void: player.capture_mouse(true))
-	box.add_child(resume)
-	var back := Button.new()
-	back.text = "Back to menu"
-	back.pressed.connect(func() -> void:
-		player.capture_mouse(false)
-		_leaving = true
-		if net:
-			NetworkManager.leave("Left the match")
-		get_tree().change_scene_to_file("res://scenes/main.tscn"))
-	box.add_child(back)
-	_panel.visible = false
-
-
-func _slider(parent: Control, label: String, lo: float, hi: float, value: float, cb: Callable) -> HSlider:
-	var row := HBoxContainer.new()
-	var l := Label.new()
-	l.text = label
-	l.custom_minimum_size = Vector2(90, 0)
-	row.add_child(l)
-	var s := HSlider.new()
-	s.min_value = lo
-	s.max_value = hi
-	s.step = 0.01
-	s.value = value
-	s.custom_minimum_size = Vector2(190, 0)
-	s.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	s.value_changed.connect(cb)
-	row.add_child(s)
-	parent.add_child(row)
-	return s
-
-
-func _on_capture(captured: bool) -> void:
-	_panel.visible = not captured
-	if not captured:
-		_sens.set_value_no_signal(player.look_sensitivity)
-		_fov.set_value_no_signal(player.fov)
-
-
-## First-use graphics stalls (shader/pipeline compiles for the charges, held-charge viewmodel, breach particles,
-## scorch decal and bullet marks) froze a window for ~0.15–1.2 s the first time each appeared mid-fight.
-## Draw each once at load, behind a short loading cover, so the cost lands here instead.
-func _warm_up_graphics() -> void:
-	var cover := CanvasLayer.new()
-	cover.layer = 100
-	var bg := ColorRect.new()
-	bg.color = Color(0.03, 0.03, 0.04)
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	cover.add_child(bg)
-	var l := Label.new()
-	l.text = "Loading..."
-	l.set_anchors_preset(Control.PRESET_CENTER)
-	cover.add_child(l)
-	add_child(cover)
-	await get_tree().process_frame
-	var t0 := Time.get_ticks_msec()
-	var cam := player.camera.global_transform
-	var at := func(x: float, y: float, d: float) -> Vector3: return cam * Vector3(x, y, -d)
-	var face := cam.basis.z
-	var tmp: Array[Node] = []
-	# Behind-cover geometry for decal/particles to land on.
-	var back := MeshInstance3D.new()
-	var bm := BoxMesh.new()
-	bm.size = Vector3(4, 3, 0.1)
-	bm.material = Surfaces.get_mat("plaster")
-	back.mesh = bm
-	add_child(back)
-	back.global_transform = Transform3D(cam.basis, at.call(0.0, 0.0, 3.0))
-	tmp.append(back)
-	for k in [WallModule.Kind.ORDINARY, WallModule.Kind.HEAVY]:
-		var c := Charge.new()
-		c.authoritative = false
-		add_child(c)
-		c.setup(modules[0], k, 99.0, at.call(-0.5 + k, 0.0, 2.0), face)
-		c.remove_from_group("charges")
-		c.set_process(false)
-		tmp.append(c)
-	var d := Decal.new()
-	d.texture_albedo = WallModule._scorch()
-	d.size = Vector3(2, 1, 2)
-	add_child(d)
-	d.global_transform = Transform3D(Basis.looking_at(-face, cam.basis.y) * Basis(Vector3.RIGHT, deg_to_rad(90)), at.call(0.0, 0.0, 2.95))
-	tmp.append(d)
-	var mark := MeshInstance3D.new()
-	var q := QuadMesh.new()
-	q.size = Vector2(0.3, 0.3)
-	q.material = loadout._mark_mat
-	mark.mesh = q
-	add_child(mark)
-	mark.global_transform = Transform3D(cam.basis, at.call(0.3, 0.3, 2.0))
-	tmp.append(mark)
-	loadout.effects.burst(at.call(0.0, 0.0, 2.5), face, true, true)
-	var vm := loadout.viewmodel
-	if vm:
-		vm.set_process(false)
-		vm._charge_ord.visible = true
-		vm._charge_heavy.visible = true
-		vm._rifle.visible = true
-	for i in 4:
-		await get_tree().process_frame
-	for n in tmp:
-		n.queue_free()
-	loadout.effects.clear()
-	if vm:
-		vm.set_process(true)
-	cover.queue_free()
-	print("[Warmup] graphics warm-up %d ms" % (Time.get_ticks_msec() - t0))
-
-
-## Host left (or we were dropped): back to the menu, which shows the reason.
-func _on_session_ended(reason: String) -> void:
-	print("[Match] session ended: ", reason)
-	if is_inside_tree() and not _leaving:
-		player.capture_mouse(false)
-		get_tree().change_scene_to_file.call_deferred("res://scenes/main.tscn")
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if not (event is InputEventKey and event.pressed and not event.echo):
-		return
-	var k := (event as InputEventKey).physical_keycode
-	if k >= KEY_F1 and k <= KEY_F3:
-		_cams[k - KEY_F1].make_current()
-		player.input_enabled = false
-	elif k == KEY_F4:
-		player.camera.make_current()
-		player.input_enabled = true
-
-
-func _process(_delta: float) -> void:
-	var v := player.velocity
-	_hud.text = "WASD move · Shift sprint · C crouch · LMB fire/place · RMB aim · R reload · 1 rifle 2 ordinary charge 3 heavy charge · T restart · Esc mouse · F1-F3 cams, F4 player\nspeed %.1f m/s  %s  height %.2f m  FOV %.0f" % [
-		Vector2(v.x, v.z).length(), "CROUCHED" if player.crouched else "standing", player.height, player.fov]
-
-
-# ---------------------------------------------------------------- headless smoke test
-
-func _frames(n: int) -> void:
-	for i in n:
-		await get_tree().physics_frame
-
-
-func _check(label: String, ok: bool, detail: String = "") -> void:
-	print(("  PASS " if ok else "  FAIL ") + label + (" " + detail if detail != "" else ""))
-	if not ok:
-		_fails += 1
 
 
 func _run_smoke() -> void:
@@ -495,18 +207,6 @@ func _run_smoke() -> void:
 
 # ---------------------------------------------------------------- headless combat smoke test
 
-func _mod(id: String) -> WallModule:
-	for m in modules:
-		if m.wall_id == id:
-			return m
-	return null
-
-
-func _stand_at(pos: Vector3, yaw_deg: float) -> void:
-	player.script_move = Vector2.ZERO
-	player.teleport(pos, yaw_deg)
-
-
 func _run_smoke_combat() -> void:
 	var t := get_tree().create_timer(120.0)
 	t.timeout.connect(func() -> void:
@@ -529,12 +229,13 @@ func _run_smoke_combat() -> void:
 	await _frames(5)
 	var r := lo.fire_rifle()
 	_check("rifle hits target", r.get("hit", false) and r["collider"] == t1 and not r["muzzle_blocked"])
-	_check("hit does damage + marker", is_equal_approx(t1.health, 80.0) and lo.hit_marker > 0.0 and lo.mag == 29)
+	_check("hit does damage + marker", is_equal_approx(t1.health, 100.0 - lo.tuning.damage) and lo.hit_marker > 0.0 and lo.mag == 29)
 	_check("fire rate gate", lo.fire_rifle().is_empty())
-	for i in 4:
+	var to_kill := ceili(100.0 / lo.tuning.damage) # quick time-to-kill: 3 rifle body hits
+	for i in to_kill - 1:
 		await _frames(8)
 		lo.fire_rifle()
-	_check("5 hits down the target", not t1.alive and lo.mag == 25 and t1.collision_layer == 0)
+	_check("%d hits down the target" % to_kill, not t1.alive and lo.mag == 30 - to_kill and t1.collision_layer == 0)
 	_stand_at(Vector3(3.0, 0.05, -6.0), 0.0)
 	await _frames(8)
 	r = lo.fire_rifle()
@@ -544,9 +245,9 @@ func _run_smoke_combat() -> void:
 	# --- reload / dry fire
 	_check("reload starts", lo.start_reload() and lo.reloading)
 	await _frames(8)
-	_check("cannot fire while reloading", lo.fire_rifle().is_empty() and lo.mag == 24)
+	_check("cannot fire while reloading", lo.fire_rifle().is_empty() and lo.mag == 29 - to_kill)
 	await _frames(40)
-	_check("reload fills mag from reserve", not lo.reloading and lo.mag == 30 and lo.reserve == 84, "mag=%d res=%d" % [lo.mag, lo.reserve])
+	_check("reload fills mag from reserve", not lo.reloading and lo.mag == 30 and lo.reserve == 89 - to_kill, "mag=%d res=%d" % [lo.mag, lo.reserve])
 	var fired := lo.shots_fired
 	lo.mag = 0
 	lo.reserve = 0
@@ -646,6 +347,67 @@ func _run_smoke_combat() -> void:
 	await _frames(100)
 	_check("player walks through reinforced opening", player.global_position.x > 3.0, "x=%.2f" % player.global_position.x)
 
+	# --- reinforcement: timed install, interruption, rejection, penetration, heavy-only breach
+	var kit := NetCmd.new()
+	kit.tool = Loadout.Tool.REINFORCE
+	kit.fire = true
+	var seq := 5000
+	_stand_at(Vector3(0.5, 0.05, -2.75), -90.0)
+	await _frames(5)
+	lo.select(Loadout.Tool.REINFORCE)
+	lo.apply_cmd(NetCmd.new(), 1.0 / 60.0)
+	kit.seq = seq
+	lo.apply_cmd(kit, 1.0 / 60.0)
+	_check("already-reinforced panel can't take a kit", wall_b.material == WallModule.Mat.REINFORCED and lo.install_left <= 0.0
+		and int(lo.charges[Loadout.Tool.REINFORCE]) == 2, lo.last_message)
+	var open := NetCmd.new()
+	open.tool = Loadout.Tool.REINFORCE
+	lo.apply_cmd(open, 1.0 / 60.0)
+	_stand_at(Vector3(0.5, 0.05, -8.25), -90.0)
+	await _frames(5)
+	lo.apply_cmd(open, 1.0 / 60.0)
+	_check("ordinary panel stops rounds only after reinforcement", is_equal_approx(float(wall_d.get_meta("pen_mult")), WallModule.ORDINARY_PEN_MULT))
+	for i in 60:
+		seq += 1
+		kit.seq = seq
+		lo.apply_cmd(kit, 1.0 / 60.0)
+	_check("install is progressing but not committed", lo.install_left > 0.0 and wall_d.material == WallModule.Mat.ORDINARY
+		and int(lo.charges[Loadout.Tool.REINFORCE]) == 2)
+	lo.apply_cmd(open, 1.0 / 60.0)
+	_check("releasing fire interrupts the install", lo.install_left <= 0.0 and wall_d.material == WallModule.Mat.ORDINARY)
+	for i in 40:
+		seq += 1
+		kit.seq = seq
+		lo.apply_cmd(kit, 1.0 / 60.0)
+	_stand_at(Vector3(-0.5, 0.05, -5.4), 90.0) # looking at a non-breachable surface cancels progress
+	await _frames(2)
+	seq += 1
+	kit.seq = seq
+	lo.apply_cmd(kit, 1.0 / 60.0)
+	_check("looking away cancels the install", lo.install_left <= 0.0 and wall_d.material == WallModule.Mat.ORDINARY)
+	lo.apply_cmd(open, 1.0 / 60.0)
+	_stand_at(Vector3(0.5, 0.05, -8.25), -90.0)
+	await _frames(5)
+	lo.apply_cmd(open, 1.0 / 60.0)
+	for i in int(lo.tuning.reinforce_time * 60.0) + 5:
+		seq += 1
+		kit.seq = seq
+		lo.apply_cmd(kit, 1.0 / 60.0)
+	_check("held install reinforces the panel and spends one kit", wall_d.material == WallModule.Mat.REINFORCED and wall_d.revision == 1
+		and wall_d.state == WallModule.State.INTACT and int(lo.charges[Loadout.Tool.REINFORCE]) == 1, lo.last_message)
+	_check("reinforced panel stops rifle rounds (pen_mult 0) and keeps matching collision", float(wall_d.get_meta("pen_mult")) == 0.0 and _parts_match(wall_d))
+	lo.apply_cmd(open, 1.0 / 60.0)
+	lo.select(Loadout.Tool.ORDINARY_CHARGE)
+	_check("ordinary charge now refused on it", not lo.place_charge() and wall_d.state == WallModule.State.INTACT, lo.last_message)
+	lo.select(Loadout.Tool.HEAVY_CHARGE)
+	_check("heavy charge accepted on reinforced panel", lo.place_charge())
+	_check("shipping tuning: heavy charge warns longer and costs more", WEAPON_TUNING.heavy_fuse > WEAPON_TUNING.ordinary_fuse
+		and preload("res://data/match_tuning.tres").price_heavy > preload("res://data/match_tuning.tres").price_ordinary)
+	_check("panel with an armed charge can't be reinforced", not wall_d.can_reinforce())
+	await _frames(int(lo.tuning.heavy_fuse * 60.0) + 15)
+	_check("reinforced panel breached by heavy charge (revision 2)", wall_d.state == WallModule.State.BREACHED and wall_d.revision == 2)
+	_check("breached reinforced panel can't be reinforced again", not wall_d.reinforce())
+
 	# --- effects bounded
 	for i in 20:
 		lo.effects.burst(Vector3(3, 1, -5), Vector3.LEFT, i % 2 == 0)
@@ -657,16 +419,54 @@ func _run_smoke_combat() -> void:
 	restart()
 	await _frames(5)
 	_check("restart: panels intact", wall_c.state == WallModule.State.INTACT and wall_c.revision == 0 and wall_c.shape_count() == 1
-		and wall_b.state == WallModule.State.INTACT and wall_d.state == WallModule.State.INTACT and wall_b.mesh_count() == 1)
+		and wall_b.state == WallModule.State.INTACT and wall_d.state == WallModule.State.INTACT and wall_b.mesh_count() == 1
+		and wall_d.material == WallModule.Mat.ORDINARY and float(wall_d.get_meta("pen_mult")) == WallModule.ORDINARY_PEN_MULT)
 	_check("restart: targets restored", t1.alive and is_equal_approx(t1.health, 100.0) and t1.collision_layer == 4 and t1.rotation.x == 0.0)
 	_check("restart: loadout restored", lo.mag == 30 and lo.reserve == 90 and lo.tool == Loadout.Tool.RIFLE
-		and lo.charges[Loadout.Tool.ORDINARY_CHARGE] == 3 and lo.charges[Loadout.Tool.HEAVY_CHARGE] == 2 and lo.active_charges.is_empty())
+		and lo.charges[Loadout.Tool.ORDINARY_CHARGE] == 3 and lo.charges[Loadout.Tool.HEAVY_CHARGE] == 2 and int(lo.charges[Loadout.Tool.REINFORCE]) == 2 and lo.active_charges.is_empty())
 	_check("restart: marks and effects cleared", lo.visible_marks() == 0 and lo.effects.active == 0 and lo.effects.get_child_count() == 0)
 	_check("restart: player at spawn", player.global_position.distance_to(_spawn.global_position) < 0.1)
 	_stand_at(Vector3(0.5, 0.05, -5.4), -90.0)
 	player.script_move = Vector2(0, -1)
 	await _frames(100)
 	_check("restart: wall blocks again", player.global_position.x < 1.1, "x=%.2f" % player.global_position.x)
+
+	# --- gun tiers, sidearm fallback, medkit
+	var gun := NetCmd.new()
+	gun.fire = true
+	var idle := NetCmd.new()
+	player.script_move = Vector2.ZERO
+	lo.set_gear("", "p9")
+	lo.apply_cmd(idle, 1.0 / 60.0)
+	_check("no primary: key 1 selects the sidearm", lo.tool == Loadout.Tool.SIDEARM and lo.weapon_id() == "p9" and lo.mag == 12
+		and is_equal_approx(lo.tuning.damage, Weapons.DEFS["p9"].damage))
+	var shots0 := lo.shots_fired
+	for i in 10:
+		lo.apply_cmd(gun, 1.0 / 60.0)
+	_check("pistol is semi-auto: one shot per trigger pull", lo.shots_fired == shots0 + 1, "shots=%d" % (lo.shots_fired - shots0))
+	lo.set_gear("smg", "p9")
+	_check("new primary arrives with full ammo and its stats", lo.primary == "smg", "tool=%d" % lo.tool)
+	lo.apply_cmd(idle, 1.0 / 60.0)
+	lo.select(Loadout.Tool.RIFLE)
+	_check("SMG wielded: 30 rounds, automatic", lo.weapon_id() == "smg" and lo.mag == 30 and lo.tuning.auto and is_equal_approx(lo.tuning.damage, Weapons.DEFS["smg"].damage))
+	lo.select(Loadout.Tool.SIDEARM)
+	_check("sidearm keeps its own ammo", lo.weapon_id() == "p9" and lo.mag == 11 and is_equal_approx(lo.tuning.damage, Weapons.DEFS["p9"].damage), "mag=%d" % lo.mag)
+	var healed := [0.0]
+	lo.healed.connect(func(a: float) -> void: healed[0] += a)
+	lo.charges[Loadout.Tool.MEDKIT] = 2
+	var med := NetCmd.new()
+	med.tool = Loadout.Tool.MEDKIT
+	med.fire = true
+	var med_idle := NetCmd.new()
+	med_idle.tool = Loadout.Tool.MEDKIT
+	lo.apply_cmd(med_idle, 1.0 / 60.0)
+	for i in 60:
+		lo.apply_cmd(med, 1.0 / 60.0)
+	lo.apply_cmd(med_idle, 1.0 / 60.0)
+	_check("releasing interrupts healing, no kit spent", healed[0] == 0.0 and int(lo.charges[Loadout.Tool.MEDKIT]) == 2)
+	for i in 200:
+		lo.apply_cmd(med, 1.0 / 60.0)
+	_check("held medkit heals 50 once and is consumed", healed[0] == 50.0 and int(lo.charges[Loadout.Tool.MEDKIT]) == 1, "healed=%.0f kits=%d" % [healed[0], lo.charges[Loadout.Tool.MEDKIT]])
 
 	if _fails == 0:
 		print("SMOKE_OK combat")
@@ -677,22 +477,3 @@ func _run_smoke_combat() -> void:
 
 
 ## Collision shapes and meshes of a module must match its authored part list exactly.
-func _parts_match(m: WallModule) -> bool:
-	var boxes := m.part_boxes(m.state)
-	var shapes: Array[CollisionShape3D] = []
-	var meshes: Array[MeshInstance3D] = []
-	for c in m.get_children():
-		if c is CollisionShape3D:
-			shapes.append(c)
-		elif c is MeshInstance3D:
-			meshes.append(c)
-	if shapes.size() != boxes.size() or meshes.size() != boxes.size():
-		return false
-	for i in boxes.size():
-		var ok_s: bool = ((shapes[i].shape as BoxShape3D).size - boxes[i].size).length() < 0.001 \
-			and (shapes[i].position - boxes[i].get_center()).length() < 0.001
-		var ok_m: bool = ((meshes[i].mesh as BoxMesh).size - boxes[i].size).length() < 0.001 \
-			and (meshes[i].position - boxes[i].get_center()).length() < 0.001
-		if not (ok_s and ok_m):
-			return false
-	return true

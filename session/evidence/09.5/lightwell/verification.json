@@ -1,0 +1,27 @@
+{
+  "build": "0.1.0-p10+83eb05f",
+  "source": "working tree; no new commit",
+  "map": "lightwell/v1/98c8d84564097a7dc9b71cd96dc16290fa23d76d540a7e74b5752b635ae56097",
+  "checks": {
+    "full_suite": "pass",
+    "source_geometry": "pass",
+    "six_peers_late_join_rtt100_jitter10_loss2": "pass",
+    "map_mismatch_rejection": "pass",
+    "packaged_mac_geometry": "pass",
+    "packaged_mac_two_peer_full_match_rematch": "pass",
+    "windows_export": "pass",
+    "windows_zip_integrity": "pass"
+  },
+  "captures": {
+    "map": "1280x900, nine views",
+    "menu": "1280x720",
+    "plan_view": "roof/header meshes hidden only for capture; collision retained"
+  },
+  "remaining": [
+    "Human tactical layout and control feel",
+    "Real microphones and cross-device Steam/LAN",
+    "Windows runtime",
+    "Lightwell graphics frame-time measurements",
+    "Final art/readability treatment"
+  ]
+}

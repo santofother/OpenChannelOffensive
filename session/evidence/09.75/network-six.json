@@ -1,0 +1,111 @@
+{
+  "build": "0.1.0-p7+83eb05f",
+  "clients": {
+    "182673621": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 19090.0944343982,
+      "rtt_mean_ms": 124.65827291662,
+      "rtt_p95_ms": 138.029006958008,
+      "sim_dropped": 21,
+      "snaps": 974,
+      "stale_events": 0,
+      "stale_snaps": 1,
+      "up_Bps": 6930.01808318264
+    },
+    "409934037": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 19000.2009000321,
+      "rtt_mean_ms": 124.482423616492,
+      "rtt_p95_ms": 150.001998901367,
+      "sim_dropped": 25,
+      "snaps": 969,
+      "stale_events": 0,
+      "stale_snaps": 2,
+      "up_Bps": 6821.8418514947
+    },
+    "454916223": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 20169.457903808,
+      "rtt_mean_ms": 123.586111421938,
+      "rtt_p95_ms": 139.212997436523,
+      "sim_dropped": 18,
+      "snaps": 597,
+      "stale_events": 0,
+      "stale_snaps": 1,
+      "up_Bps": 6791.25882085135
+    },
+    "1018816438": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 19005.0795053004,
+      "rtt_mean_ms": 124.087604061588,
+      "rtt_p95_ms": 145.643005371094,
+      "sim_dropped": 21,
+      "snaps": 972,
+      "stale_events": 0,
+      "stale_snaps": 3,
+      "up_Bps": 6825.63042081593
+    }
+  },
+  "conditions": {
+    "sim_jitter_ms": 10.0,
+    "sim_latency_ms_one_way_each_side": 50.0,
+    "sim_loss": 0.02,
+    "transport": "ENet localhost, headless, one machine"
+  },
+  "date": "2026-11-16T20:31:58",
+  "failures": 0,
+  "host": {
+    "budget_drops": 0,
+    "cmds": 16743,
+    "down_Bps": 30247.1916585057,
+    "dup_cmds": 39515,
+    "rewind_ticks_max": 12.0,
+    "rewind_ticks_mean": 12.0,
+    "secs": 52.077,
+    "sim_us_max": 8587.0,
+    "sim_us_mean": 697.106525911708,
+    "sim_us_p95": 1656.0,
+    "sim_us_p99": 2649.0,
+    "stale_round_cmds": 311,
+    "starved_slot_ticks": 3494,
+    "ticks": 3126,
+    "up_Bps": 84223.0159187357
+  },
+  "players": 5,
+  "results": {
+    "node_counts_per_reset": [
+      {
+        "1": 542,
+        "182673621": 550,
+        "409934037": 522,
+        "454916223": 522,
+        "1018816438": 538,
+        "1887176630": 522
+      },
+      {
+        "1": 542,
+        "182673621": 550,
+        "409934037": 522,
+        "454916223": 522,
+        "1018816438": 538,
+        "1887176630": 522
+      },
+      {
+        "1": 542,
+        "182673621": 550,
+        "409934037": 522,
+        "454916223": 522,
+        "1018816438": 538,
+        "1887176630": 522
+      }
+    ]
+  }
+}

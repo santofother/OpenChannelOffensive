@@ -1,0 +1,17 @@
+{
+  "attack_zones": 7,
+  "door_thresholds_checked_on_both_faces": 44,
+  "exposed_door_rays": 0,
+  "failures": 0,
+  "intact_intervening_rooms": [
+    4,
+    4
+  ],
+  "map": "lightwell/v4/7a8e0627f8a6b0231c65746d8237a95c6ac7cf0285c8c9c6f23e0002c47c8dae",
+  "plant_pocket_samples": 66,
+  "reset_iterations": 10,
+  "settled_nodes": 4936,
+  "spawn_slots": 24,
+  "stairs_checked_both_directions": 2,
+  "wall_cells": 516
+}

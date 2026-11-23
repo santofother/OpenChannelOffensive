@@ -13,6 +13,8 @@
 | 07 | [Complete 3v3 round loop](07-round-loop.md) | M4 | Codex GPT-6.1 Sol / high |
 | 08 | [Economy and reinforcement](08-economy-reinforcement.md) | M5 | Codex GPT-6.1 Sol / medium |
 | 09 | [Representative polish and one complete map](09-polish-map.md) | M6 | Current builder / medium; GPT-6.1 Terra / medium for visual critique |
+| 09.5 | [Lightwell: detailed two-site map plan](09.5-lightwell-map.md) | M6 extension | Current builder / medium; Sol / high for network/wall-state changes |
+| 09.75 | [Gear functionality and reference-quality models](09.75-gear-and-models.md) | M5/M6 extension | Opus / medium; Sol or Opus / high for replication |
 | 10 | [Private release candidate](10-private-release.md) | M7 | Codex GPT-6.1 Sol / medium |
 
 The first four files preserve the agreed first-session sequence; M2–M7 each have a focused file. A session may span several work periods. Combine straightforward changes only when they remain reviewable and acceptance checks pass. Do not start the next session automatically just because code was generated; verify the current gate.

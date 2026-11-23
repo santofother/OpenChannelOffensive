@@ -15,9 +15,9 @@ enum Mode { OFFLINE, ENET, STEAM }
 
 const DEFAULT_PORT := 24690
 const MAX_PLAYERS := 6 ## 3v3
-const GAME_VERSION := "0.1.0"
+const GAME_VERSION := "0.2.0"
 ## Bump when the wire protocol changes incompatibly; part of build_id so mismatched builds are refused.
-const PROTOCOL := 2
+const PROTOCOL := 21
 const REGISTER_TIMEOUT := 15.0
 
 ## "<GAME_VERSION>-p<PROTOCOL>+<commit>". Host and clients must match exactly; `--build-id=X` overrides (tests).
@@ -26,18 +26,30 @@ var mode: Mode = Mode.OFFLINE
 var local_name := "Player"
 var player_names: Dictionary = {} ## peer_id -> name (host-authoritative)
 var args: Dictionary = {} ## user args after `--`, e.g. `--host-enet --name=Bob`
+var selected_map := "lightwell" ## host-owned; accepted before a client enters its map scene
+## Host: bots take every empty team slot (3 per team) and step aside when a person joins. Menu toggle, default on;
+## `--bots=0` turns it off. Automated network tests never get bots.
+var fill_bots := true
 var last_end_reason := "" ## shown by the menu after a session ends (e.g. "Host left the game")
 
 var _register_wait := 0.0
+var _connect_wait := 0.0
+var enet_address := ""
+var enet_port := DEFAULT_PORT
 
 
 func _ready() -> void:
 	args = _parse_args()
+	selected_map = String(args.get("map", "demo" if args.has("net-test") else "lightwell"))
+	if not MapRegistry.SCENES.has(selected_map):
+		selected_map = "lightwell"
 	build_id = String(args["build-id"]) if args.has("build-id") else _read_build_id()
 	print("[Net] Build ", build_id)
 	if args.has("name"):
 		local_name = args["name"]
-	multiplayer.peer_connected.connect(func(id: int) -> void: print("[Net] PEER_CONNECTED ", id))
+	if args.has("bots"):
+		fill_bots = String(args["bots"]) not in ["0", "false", "off"]
+	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)
@@ -66,7 +78,7 @@ func _read_build_id() -> String:
 
 
 func mode_name() -> String:
-	return ["Offline", "ENet (local test)", "Steam"][mode]
+	return ["Offline", "LAN", "Steam"][mode]
 
 
 func is_in_session() -> bool:
@@ -75,6 +87,8 @@ func is_in_session() -> bool:
 
 
 func host_enet(port: int = DEFAULT_PORT) -> Error:
+	enet_port = port
+	enet_address = "*"
 	var peer := ENetMultiplayerPeer.new()
 	var err := peer.create_server(port, MAX_PLAYERS - 1)
 	if err != OK:
@@ -85,6 +99,12 @@ func host_enet(port: int = DEFAULT_PORT) -> Error:
 
 
 func join_enet(ip: String, port: int = DEFAULT_PORT) -> Error:
+	ip = ip.strip_edges()
+	if ip.is_empty():
+		connection_failed.emit("Enter the host computer's LAN IP address. The host shows it in Esc settings.")
+		return ERR_INVALID_PARAMETER
+	enet_address = ip
+	enet_port = port
 	var peer := ENetMultiplayerPeer.new()
 	var err := peer.create_client(ip, port)
 	if err != OK:
@@ -108,6 +128,7 @@ func start_host_with_peer(peer: MultiplayerPeer, m: Mode) -> void:
 
 func start_client_with_peer(peer: MultiplayerPeer, m: Mode) -> void:
 	mode = m
+	_connect_wait = 30.0 if m == Mode.STEAM else REGISTER_TIMEOUT
 	multiplayer.multiplayer_peer = peer
 
 
@@ -121,12 +142,24 @@ func leave(reason: String = "Left game") -> void:
 		SteamManager.leave_lobby()
 	mode = Mode.OFFLINE
 	_register_wait = 0.0
+	_connect_wait = 0.0
 	player_names.clear()
 	last_end_reason = reason
 	print("[Net] Session ended: ", reason)
 	status_changed.emit(reason)
 	session_ended.emit(reason)
 	roster_changed.emit()
+
+
+func _on_peer_connected(id: int) -> void:
+	print("[Net] PEER_CONNECTED ", id)
+	var peer := multiplayer.multiplayer_peer
+	if peer is ENetMultiplayerPeer and multiplayer.is_server():
+		# Six local peers exposed ENet's RTT-based probabilistic shedding (throttle 10/32,
+		# 4/25 voice packets delivered on localhost). Our command/voice streams are bounded;
+		# don't add arbitrary loss on top of real network loss. Steam has its own transport.
+		# https://docs.godotengine.org/en/stable/classes/class_enetpacketpeer.html#class-enetpacketpeer-method-throttle-configure
+		peer.get_peer(id).throttle_configure(5000, 2, 0)
 
 
 func _on_peer_disconnected(id: int) -> void:
@@ -139,21 +172,44 @@ func _on_peer_disconnected(id: int) -> void:
 
 
 func _on_connected_to_server() -> void:
+	_connect_wait = 0.0
+	var peer := multiplayer.multiplayer_peer
+	if peer is ENetMultiplayerPeer:
+		peer.get_peer(1).throttle_configure(5000, 2, 0)
 	print("[Net] CONNECTED my_id=", multiplayer.get_unique_id())
 	status_changed.emit("Connected (%s)" % mode_name())
 	connected.emit()
 	_register_wait = REGISTER_TIMEOUT
-	_register.rpc_id(1, local_name, build_id)
+	var layouts := MapRegistry.manifests()
+	if args.has("map-hash"):
+		layouts["lightwell"] = String(args["map-hash"]) # mismatch regression hook
+	_register.rpc_id(1, local_name, build_id, layouts)
+
+
+func lan_addresses() -> PackedStringArray:
+	var addresses := PackedStringArray()
+	for address in IP.get_local_addresses():
+		if ":" not in address and not address.begins_with("127.") and not address.begins_with("169.254.") and address != "0.0.0.0":
+			addresses.append(address)
+	addresses.sort()
+	return addresses
+
+
+func lan_help() -> String:
+	return "Same LAN/Wi-Fi or VPN required. Allow the host app through its firewall (UDP %d). On Mac, allow Open Channel Offensive in System Settings > Privacy & Security > Local Network." % enet_port
 
 
 func _on_connection_failed() -> void:
-	leave("Connection failed")
-	connection_failed.emit("Connection failed (host unreachable or full)")
+	var reason := "Steam connection failed (host unreachable or match full)."
+	if mode == Mode.ENET:
+		reason = "Could not reach %s:%d. %s" % [enet_address, enet_port, lan_help()]
+	leave(reason)
+	connection_failed.emit(reason)
 
 
 # NET: client -> host. Host validates build and capacity.
 @rpc("any_peer", "call_remote", "reliable")
-func _register(pname: String, build: String = "") -> void:
+func _register(pname: String, build: String = "", layouts: Dictionary = {}) -> void:
 	if not multiplayer.is_server():
 		return
 	var id := multiplayer.get_remote_sender_id()
@@ -161,6 +217,8 @@ func _register(pname: String, build: String = "") -> void:
 	if build != build_id:
 		why = "Can't join: host build is %s, yours is %s. Both need the same download." \
 			% [build_id, build if not build.is_empty() else "unknown"]
+	elif layouts.get(selected_map, "") != MapRegistry.identity(selected_map):
+		why = "Can't join: %s map layout differs. Both need the same download." % selected_map
 	elif player_names.size() >= MAX_PLAYERS:
 		why = "Can't join: the match is full (%d/%d)." % [player_names.size(), MAX_PLAYERS]
 	if not why.is_empty():
@@ -176,6 +234,7 @@ func _register(pname: String, build: String = "") -> void:
 		pname = "Player%d" % (player_names.size() + 1)
 	player_names[id] = pname
 	print("[Net] REGISTERED ", id, " ", pname)
+	_accepted_map.rpc_id(id, selected_map, MapRegistry.identity(selected_map))
 	_sync_names.rpc(player_names)
 	player_registered.emit(id, pname)
 	roster_changed.emit()
@@ -197,9 +256,21 @@ func _rejected(reason: String) -> void:
 
 
 func _process(delta: float) -> void:
+	if _connect_wait > 0.0:
+		_connect_wait -= delta
+		if _connect_wait <= 0.0:
+			_on_connection_failed()
 	if not is_in_session() or multiplayer.is_server():
 		return
 	if _register_wait > 0.0:
 		_register_wait -= delta
 		if _register_wait <= 0.0:
 			leave("Can't join: the host didn't accept you (different build?). Yours: %s" % build_id)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _accepted_map(map_id: String, signature: String) -> void:
+	if not MapRegistry.SCENES.has(map_id) or MapRegistry.identity(map_id) != signature:
+		leave("Can't join: map layout differs. Both need the same download.")
+		return
+	selected_map = map_id

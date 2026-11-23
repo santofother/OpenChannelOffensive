@@ -1,0 +1,38 @@
+[
+  {
+    "layout": "Switchboard",
+    "sites": 2,
+    "all_walls_destructible": true,
+    "all_walls_reinforceable": true,
+    "floor_tiling": "pass",
+    "rotation_clearance": "pass",
+    "rotation_length_m": 37.0,
+    "primary_seconds_at_2_8mps": 13.21,
+    "secondary_seconds_at_3_15mps": 11.75,
+    "unarmed_seconds_at_3_4mps": 10.88
+  },
+  {
+    "layout": "Lightwell",
+    "sites": 2,
+    "all_walls_destructible": true,
+    "all_walls_reinforceable": true,
+    "floor_tiling": "pass",
+    "rotation_clearance": "pass",
+    "rotation_length_m": 56.7,
+    "primary_seconds_at_2_8mps": 20.25,
+    "secondary_seconds_at_3_15mps": 18.0,
+    "unarmed_seconds_at_3_4mps": 16.68
+  },
+  {
+    "layout": "Twin Wing",
+    "sites": 2,
+    "all_walls_destructible": true,
+    "all_walls_reinforceable": true,
+    "floor_tiling": "pass",
+    "rotation_clearance": "pass",
+    "rotation_length_m": 27.52,
+    "primary_seconds_at_2_8mps": 9.83,
+    "secondary_seconds_at_3_15mps": 8.74,
+    "unarmed_seconds_at_3_4mps": 8.1
+  }
+]

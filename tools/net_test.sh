@@ -13,6 +13,9 @@ LATE="${2:-0}"
 shift 2 2>/dev/null
 EXTRA="$*"
 PORT="${NET_TEST_PORT:-24741}"
+JOIN_IP="${NET_TEST_JOIN_IP:-127.0.0.1}"
+DISPLAY_ARG="--headless"
+[ "${NET_TEST_WINDOWED:-0}" = "1" ] && DISPLAY_ARG=""
 LOGDIR="${NET_TEST_LOGS:-/tmp/fps_net}"
 METRICS="${NET_METRICS_OUT:-/tmp/fps_net_metrics.json}"
 LATEFILE="$LOGDIR/late.go"
@@ -22,20 +25,20 @@ rm -f "$LOGDIR"/*.log "$LATEFILE"
 HOST_ARGS="--match-host --net-test=$PLAYERS --no-steam --port=$PORT --name=Host --metrics-out=$METRICS"
 [ "$LATE" = "1" ] && HOST_ARGS="$HOST_ARGS --late-file=$LATEFILE"
 # shellcheck disable=SC2086
-"$GODOT_BIN" --headless --path game -- $HOST_ARGS $EXTRA > "$LOGDIR/host.log" 2>&1 &
+"$GODOT_BIN" $DISPLAY_ARG --path game -- $HOST_ARGS $EXTRA > "$LOGDIR/host.log" 2>&1 &
 HP=$!
 sleep 2
 PIDS=""
 i=2
 while [ "$i" -le "$PLAYERS" ]; do
 	# shellcheck disable=SC2086
-	"$GODOT_BIN" --headless --path game -- --match-join=127.0.0.1 --net-test --host-left-ok --no-steam --port=$PORT --name=Bot$i $EXTRA > "$LOGDIR/client$i.log" 2>&1 &
+	"$GODOT_BIN" $DISPLAY_ARG --path game -- "--match-join=$JOIN_IP" --net-test --host-left-ok --no-steam --port=$PORT --name=Bot$i $EXTRA > "$LOGDIR/client$i.log" 2>&1 &
 	PIDS="$PIDS $!"
 	i=$((i + 1))
 done
 if [ "$LATE" = "1" ]; then
 	# shellcheck disable=SC2086
-	"$GODOT_BIN" --headless --path game -- --match-join=127.0.0.1 --wait-file=$LATEFILE --net-test --host-left-ok --no-steam --port=$PORT --name=Late $EXTRA > "$LOGDIR/late.log" 2>&1 &
+	"$GODOT_BIN" $DISPLAY_ARG --path game -- "--match-join=$JOIN_IP" --wait-file=$LATEFILE --net-test --host-left-ok --no-steam --port=$PORT --name=Late $EXTRA > "$LOGDIR/late.log" 2>&1 &
 	PIDS="$PIDS $!"
 fi
 
@@ -58,11 +61,11 @@ for f in "$LOGDIR"/client*.log "$LOGDIR"/late.log; do
 		# Only the client the test tells to disconnect ends without the host-left message.
 		echo "  note $(basename "$f"): ended without host-left (expected only for the disconnect-test client)"
 	fi
-	grep -q "SCRIPT ERROR" "$f" && { echo "  FAIL $(basename "$f") has script errors"; grep -m3 "SCRIPT ERROR" -A2 "$f"; FAIL=1; }
+	grep -Eq "SCRIPT ERROR|^ERROR:" "$f" && { echo "  FAIL $(basename "$f") has engine/script errors"; grep -m3 -E "SCRIPT ERROR|^ERROR:" -A2 "$f"; FAIL=1; }
 done
 touch "$LOGDIR/done"
 wait $WD
 grep -q "SMOKE_OK match" "$LOGDIR/host.log" || FAIL=1
-grep -q "SCRIPT ERROR" "$LOGDIR/host.log" && { echo "  FAIL host has script errors"; grep -m3 "SCRIPT ERROR" -A2 "$LOGDIR/host.log"; FAIL=1; }
+grep -Eq "SCRIPT ERROR|^ERROR:" "$LOGDIR/host.log" && { echo "  FAIL host has engine/script errors"; grep -m3 -E "SCRIPT ERROR|^ERROR:" -A2 "$LOGDIR/host.log"; FAIL=1; }
 [ "$FAIL" = "0" ] && echo "NET TEST PASSED ($PLAYERS players, late=$LATE, $EXTRA)" || echo "NET TEST FAILED (logs in $LOGDIR)"
 exit $FAIL

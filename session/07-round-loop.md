@@ -5,11 +5,11 @@ Milestone: **M4**. First choice: **Codex GPT-6.1 Sol / high**. Alternative: **Cl
 Read [PROJECT.md](../PROJECT.md) first, then this file and relevant code. Read only these shared details when needed: Authority and Replication in [architecture](reference/architecture.md); objective cases in [verification](reference/verification.md).
 Do not read the full roadmap, every reference or future session. This file can span multiple work periods; it is not a promised duration.
 
-Prerequisite: The acceptance checks for [06-voice-radios.md](./06-voice-radios.md) must pass; use PROJECT.md for results rather than rereading that session.
+Sequencing override (user, November 16): execute S7 while S6 human acceptance is still pending. This does not mark S6 accepted; PROJECT.md owns the remaining checks.
 
 ## Work and acceptance
 
-1. Graybox one site and two viable approaches using proven modules. Test route times, defensive coverage and breach alternatives with six people.
+1. Graybox **two alternative bomb sites A/B** (confirmed user requirement, supersedes the earlier one-site proposal) and two viable approaches using proven modules. Test route times, defensive coverage and breach alternatives with six people.
 2. Add host-owned phases: lobby → equipment/prep → live → planted if applicable → resolution → next round/side swap → match result. Store deadlines on host; clients display remaining time.
 3. Add team assignment/readiness, safe loading/spawns, dropped/recoverable bomb, hold-to-plant/defuse and interruptions, objective/elimination wins, teammate-only death camera and next-round joins.
 4. Reset health/ammo, walls, tools, charges, radio ownership, pickups and timers. Dead players must not relay tactical speech to living players or receive enemy positions for spectator UI.

@@ -1,0 +1,136 @@
+{
+  "build": "0.1.0-p3+16fa18d",
+  "clients": {},
+  "conditions": {
+    "sim_jitter_ms": 10.0,
+    "sim_latency_ms_one_way_each_side": 50.0,
+    "sim_loss": 0.02,
+    "transport": "ENet localhost, headless, one machine"
+  },
+  "date": "2026-11-16T10:26:09",
+  "failures": 2,
+  "host": {
+    "budget_drops": 0,
+    "cmds": 5179,
+    "down_Bps": 33843.1134820563,
+    "dup_cmds": 12144,
+    "rewind_ticks_max": 0.0,
+    "rewind_ticks_mean": 0.0,
+    "secs": 16.496,
+    "sim_us_max": 14434.0,
+    "sim_us_mean": 369.883064516129,
+    "sim_us_p95": 658.0,
+    "sim_us_p99": 1606.0,
+    "stale_round_cmds": 154,
+    "starved_slot_ticks": 1183,
+    "ticks": 992,
+    "up_Bps": 74229.388942774
+  },
+  "players": 6,
+  "results": {
+    "voice_load": {
+      "actual_mouth_to_ear": "requires microphone/device test",
+      "codec_bytes_per_20ms": 163,
+      "host_wire_up_Bps_including_gameplay": 342771.197846568,
+      "queue_ms": 60,
+      "seconds": 2.229,
+      "talkers": 6
+    },
+    "voice_radio_recipient_counts": {
+      "1": {
+        "enet_throttle": {
+          "306872221": 10.0,
+          "1063754224": 32.0,
+          "1138926441": 14.0,
+          "1369867819": 12.0,
+          "1403582554": 32.0
+        },
+        "epoch": 7,
+        "invalid": 0,
+        "pending": 0,
+        "pickups": 0,
+        "received": {},
+        "relays": {
+          "306872221": 25,
+          "1063754224": 25,
+          "1369867819": 25
+        },
+        "rpc_count": 0,
+        "sim_drops": 0,
+        "speakers": 0,
+        "stolen": {}
+      },
+      "306872221": {
+        "enet_throttle": {},
+        "epoch": 7,
+        "invalid": 0,
+        "pending": 0,
+        "pickups": 0,
+        "received": {
+          "1": 4
+        },
+        "relays": {},
+        "rpc_count": 4,
+        "sim_drops": 0,
+        "speakers": 0,
+        "stolen": {}
+      },
+      "1063754224": {
+        "enet_throttle": {},
+        "epoch": 7,
+        "invalid": 0,
+        "pending": 0,
+        "pickups": 0,
+        "received": {
+          "1": 25
+        },
+        "relays": {},
+        "rpc_count": 25,
+        "sim_drops": 0,
+        "speakers": 0,
+        "stolen": {}
+      },
+      "1138926441": {
+        "enet_throttle": {},
+        "epoch": 7,
+        "invalid": 0,
+        "pending": 0,
+        "pickups": 0,
+        "received": {},
+        "relays": {},
+        "rpc_count": 0,
+        "sim_drops": 0,
+        "speakers": 0,
+        "stolen": {}
+      },
+      "1369867819": {
+        "enet_throttle": {},
+        "epoch": 7,
+        "invalid": 0,
+        "pending": 0,
+        "pickups": 0,
+        "received": {
+          "1": 7
+        },
+        "relays": {},
+        "rpc_count": 7,
+        "sim_drops": 0,
+        "speakers": 0,
+        "stolen": {}
+      },
+      "1403582554": {
+        "enet_throttle": {},
+        "epoch": 7,
+        "invalid": 0,
+        "pending": 0,
+        "pickups": 0,
+        "received": {},
+        "relays": {},
+        "rpc_count": 0,
+        "sim_drops": 0,
+        "speakers": 0,
+        "stolen": {}
+      }
+    }
+  }
+}

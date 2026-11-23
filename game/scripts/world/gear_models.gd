@@ -16,7 +16,7 @@ static var _tex := {}
 
 
 static func has(path: String) -> bool:
-	return ResourceLoader.exists(DIR + path + ".glb")
+	return not OS.get_cmdline_user_args().has("--no-models") and ResourceLoader.exists(DIR + path + ".glb")
 
 
 ## Instance of a model. `viewmodel` materials use the fixed first-person FOV and a z-clip scale.
@@ -75,7 +75,7 @@ static func triangles(root: Node) -> int:
 
 
 static func material(mat_name: String, viewmodel: bool = false, team: Color = Color.WHITE) -> StandardMaterial3D:
-	var key := "%s|%d|%s" % [mat_name, int(viewmodel), team.to_html() if mat_name == "team" else ""]
+	var key := "%s|%d|%s" % [mat_name, int(viewmodel), team.to_html() if mat_name in ["team", "uniform"] else ""]
 	if _mats.has(key):
 		return _mats[key]
 	if _defs.is_empty():
@@ -89,11 +89,14 @@ static func material(mat_name: String, viewmodel: bool = false, team: Color = Co
 	var col := Color(c[0], c[1], c[2]).linear_to_srgb()
 	if mat_name == "team":
 		col = team
+	elif mat_name == "uniform" and team == StandIn.TEAM_BLUE:
+		col = Color("#293449")
 	col.a = float(d.get("alpha", 1.0))
 	m.albedo_color = col
 	m.metallic = float(d.get("metallic", 0.0))
 	m.roughness = float(d.get("roughness", 0.6))
-	m.vertex_color_use_as_albedo = true
+	# The aiming mark represents emitted light; baked mesh occlusion must not dim it.
+	m.vertex_color_use_as_albedo = mat_name != "reticle"
 	var s := float(d.get("uv_scale", 4.0))
 	m.uv1_scale = Vector3(s, s, s)
 	if d.has("albedo_tex"):

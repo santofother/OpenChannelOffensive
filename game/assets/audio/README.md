@@ -1,0 +1,5 @@
+# Lightwell audio credits
+
+- Concrete and carpet footsteps and light plate impacts are by Kenney, from [Impact Sounds](https://kenney.nl/assets/impact-sounds), licensed [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). Downloaded from the [InstrictLogic mirror](https://instrictlogic.com/AssetLibrary/sounds/banks/material-impacts-footsteps-kenney-2362a2f7/). Concrete and plate use variants 000–003. Carpet uses 000, 001, 003 and a pitch-shifted 001. All were converted to mono and peak-normalized. The plate tails were shortened for metal flooring.
+- Cloth movement 1 and 2 are by Kenney, from [RPG Audio](https://kenney.nl/assets/rpg-audio), licensed CC0 1.0. Sourced as mono, high-passed and trimmed WAVs from the [jinglescript asset mirror](https://github.com/receptron/jinglescript/tree/main/samples/sfx).
+- Bot dialogue was written for Lightwell and rendered offline with the Michael and Heart voices from [Kokoro-82M v1.0](https://huggingface.co/hexgrad/Kokoro-82M), an Apache-2.0 model. The WAVs are mono at 16 kHz, with a light radio bandpass, saturation and squelch.

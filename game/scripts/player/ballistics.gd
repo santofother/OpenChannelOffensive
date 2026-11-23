@@ -12,6 +12,8 @@ extends RefCounted
 const PEN_MAX_SURFACES := 2
 const PEN_MAX_THICKNESS := 0.3
 const PLAYER_RADIUS := 0.3
+## Hits whose closest point on the body axis lies within this distance of the top end count as headshots.
+const HEAD_ZONE := 0.24
 
 
 static func _ray(space: PhysicsDirectSpaceState3D, from: Vector3, to: Vector3, mask: int, exclude: Array[RID]) -> Dictionary:
@@ -33,7 +35,8 @@ static func players_on_segment(p: Vector3, q: Vector3, players: Array) -> Dictio
 			continue
 		var t := maxf(p.distance_to(c[0]) - sqrt(PLAYER_RADIUS * PLAYER_RADIUS - miss * miss), 0.0)
 		if best.is_empty() or t < float(best["t"]):
-			best = {"id": int(pl["id"]), "position": p + d * t, "t": t}
+			var head: bool = c[1].distance_to(pl["b"]) <= HEAD_ZONE
+			best = {"id": int(pl["id"]), "position": p + d * t, "t": t, "head": head}
 	return best
 
 
@@ -118,7 +121,10 @@ static func resolve(space: PhysicsDirectSpaceState3D, eye: Vector3, dir: Vector3
 				p = h["position"] + shot_dir * (thick + 0.002)
 				ex.append((col as CollisionObject3D).get_rid())
 				continue
-		var blocked: bool = aim_obj == null or (col != aim_obj and eye.distance_to(h["position"]) < aim_dist - 0.05)
+		# aim_obj is a collider or, when the crosshair was on a player, that player's id (int):
+		# a wall the muzzle hits short of an aimed-at player is cover blocking the shot.
+		var aimed_other: bool = aim_obj is int or col != aim_obj
+		var blocked: bool = aim_obj == null or (aimed_other and eye.distance_to(h["position"]) < aim_dist - 0.05)
 		return _world(h, eye, blocked, mult, passed, impacts)
 	return _miss(false)
 
@@ -137,4 +143,4 @@ static func _world(h: Dictionary, eye: Vector3, blocked: bool, mult: float, pass
 static func _player(pl: Dictionary, eye: Vector3, blocked: bool, mult: float, passed: int, impacts: Array) -> Dictionary:
 	return {"hit": true, "position": pl["position"], "normal": Vector3.ZERO, "collider": null, "player_id": int(pl["id"]),
 		"distance": eye.distance_to(pl["position"]), "muzzle_blocked": blocked, "damage_mult": mult,
-		"penetrated": passed, "impacts": impacts}
+		"penetrated": passed, "impacts": impacts, "head": bool(pl.get("head", false))}

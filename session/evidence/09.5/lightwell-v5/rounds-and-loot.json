@@ -1,0 +1,65 @@
+{
+  "build": "0.1.0-p19+83eb05f",
+  "clients": {
+    "798987259": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 27527.0101765818,
+      "rtt_mean_ms": 124.688914522212,
+      "rtt_p95_ms": 138.628005981445,
+      "sim_dropped": 15,
+      "snaps": 477,
+      "stale_events": 0,
+      "stale_snaps": 0,
+      "up_Bps": 7367.60387755923
+    },
+    "1552808565": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 27808.4533097402,
+      "rtt_mean_ms": 122.022212576359,
+      "rtt_p95_ms": 138.108993530273,
+      "sim_dropped": 7,
+      "snaps": 488,
+      "stale_events": 0,
+      "stale_snaps": 0,
+      "up_Bps": 7020.26863990992
+    }
+  },
+  "conditions": {
+    "sim_jitter_ms": 10.0,
+    "sim_latency_ms_one_way_each_side": 50.0,
+    "sim_loss": 0.02,
+    "transport": "ENet localhost, headless, one machine"
+  },
+  "date": "2026-11-21T12:16:32",
+  "failures": 0,
+  "host": {
+    "budget_drops": 0,
+    "cmds": 13480,
+    "down_Bps": 17808.2427817448,
+    "dup_cmds": 27858,
+    "rewind_ticks_max": 0.0,
+    "rewind_ticks_mean": 0.0,
+    "secs": 64.42,
+    "sim_us_max": 9814.0,
+    "sim_us_mean": 363.720310478655,
+    "sim_us_p95": 730.0,
+    "sim_us_p99": 964.0,
+    "stale_round_cmds": 207,
+    "starved_slot_ticks": 2504,
+    "ticks": 3865,
+    "up_Bps": 80043.0301148712
+  },
+  "players": 4,
+  "results": {
+    "rounds": {
+      "failures": 0,
+      "full_match": true,
+      "players": 4,
+      "rematch": true
+    }
+  }
+}

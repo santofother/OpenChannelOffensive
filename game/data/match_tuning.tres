@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="MatchTuning" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/match_tuning.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+prep = 30.0
+live = 150.0
+plant = 5.0
+defuse = 7.0
+fuse = 40.0
+resolution = 6.0
+rounds = 12
+swap_after = 6
+interact_range = 1.8
+site_radius = 1.1

@@ -1,0 +1,91 @@
+{
+  "build": "0.1.0-p8+83eb05f",
+  "clients": {
+    "113723078": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 28179.246041315,
+      "rtt_mean_ms": 124.370845031738,
+      "rtt_p95_ms": 137.744995117188,
+      "sim_dropped": 6,
+      "snaps": 488,
+      "stale_events": 0,
+      "stale_snaps": 0,
+      "up_Bps": 6544.93207941484
+    },
+    "1119552231": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 28371.7056290991,
+      "rtt_mean_ms": 122.328600226508,
+      "rtt_p95_ms": 138.320007324219,
+      "sim_dropped": 11,
+      "snaps": 482,
+      "stale_events": 0,
+      "stale_snaps": 2,
+      "up_Bps": 6554.25904317386
+    },
+    "1466562313": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 28254.4811510329,
+      "rtt_mean_ms": 123.965722591319,
+      "rtt_p95_ms": 138.912994384766,
+      "sim_dropped": 13,
+      "snaps": 480,
+      "stale_events": 0,
+      "stale_snaps": 3,
+      "up_Bps": 6724.21831042521
+    },
+    "1484332987": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 28334.3513904517,
+      "rtt_mean_ms": 126.794415950775,
+      "rtt_p95_ms": 151.602996826172,
+      "sim_dropped": 13,
+      "snaps": 482,
+      "stale_events": 0,
+      "stale_snaps": 0,
+      "up_Bps": 7122.48834592509
+    }
+  },
+  "conditions": {
+    "sim_jitter_ms": 10.0,
+    "sim_latency_ms_one_way_each_side": 50.0,
+    "sim_loss": 0.02,
+    "transport": "ENet localhost, headless, one machine"
+  },
+  "date": "2026-11-16T20:53:41",
+  "failures": 0,
+  "host": {
+    "budget_drops": 0,
+    "cmds": 17972,
+    "down_Bps": 28930.2321457073,
+    "dup_cmds": 42313,
+    "rewind_ticks_max": 0.0,
+    "rewind_ticks_mean": 0.0,
+    "secs": 56.387,
+    "sim_us_max": 24750.0,
+    "sim_us_mean": 620.284278959811,
+    "sim_us_p95": 1442.0,
+    "sim_us_p99": 2570.0,
+    "stale_round_cmds": 285,
+    "starved_slot_ticks": 3798,
+    "ticks": 3384,
+    "up_Bps": 129239.115398939
+  },
+  "players": 5,
+  "results": {
+    "rounds": {
+      "failures": 0,
+      "full_match": true,
+      "players": 6,
+      "rematch": true
+    }
+  }
+}

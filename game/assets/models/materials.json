@@ -1,4 +1,6 @@
 {
+  "graphite": {"color": [0.045, 0.047, 0.052], "roughness": 1.0, "grunge": 0, "unshaded": true},
+  "uniform": {"color": [0.035, 0.038, 0.043], "roughness": 0.92, "normal": "fabric"},
   "polymer_black": {"color": [0.07, 0.072, 0.076], "metallic": 0.0, "roughness": 0.56, "normal": "grain", "normal_scale": 0.4, "uv_scale": 3.0},
   "polymer_grey": {"color": [0.16, 0.165, 0.17], "metallic": 0.0, "roughness": 0.66, "normal": "grain", "normal_scale": 0.5, "uv_scale": 3.0},
   "polymer_tan": {"color": [0.42, 0.34, 0.22], "metallic": 0.0, "roughness": 0.7, "normal": "grain", "normal_scale": 0.5, "uv_scale": 3.0},
@@ -30,6 +32,7 @@
   "glass_lens": {"color": [0.25, 0.5, 0.45], "metallic": 0.6, "roughness": 0.08, "alpha": 0.22, "grunge": 0.0},
   "glass_dark": {"color": [0.02, 0.03, 0.04], "metallic": 0.8, "roughness": 0.08, "grunge": 0.0},
   "reticle": {"color": [1.0, 0.12, 0.05], "emission": [1.0, 0.12, 0.05], "emission_energy": 1.6, "unshaded": true},
+  "led_white": {"color": [0.9, 0.95, 1.0], "emission": [0.9, 0.95, 1.0], "emission_energy": 2.0},
   "led_orange": {"color": [1.0, 0.4, 0.05], "emission": [1.0, 0.35, 0.04], "emission_energy": 5.0},
   "led_green": {"color": [0.3, 1.0, 0.2], "emission": [0.3, 1.0, 0.2], "emission_energy": 3.0},
   "led_red": {"color": [1.0, 0.1, 0.05], "emission": [1.0, 0.08, 0.04], "emission_energy": 5.0},

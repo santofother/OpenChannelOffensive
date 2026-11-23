@@ -1,0 +1,35 @@
+{
+  "pass": true,
+  "checks": [
+    {
+      "width": 736,
+      "layout": "a",
+      "states": "pass"
+    },
+    {
+      "width": 736,
+      "layout": "b",
+      "states": "pass"
+    },
+    {
+      "width": 736,
+      "layout": "c",
+      "states": "pass"
+    },
+    {
+      "width": 320,
+      "layout": "a",
+      "states": "pass"
+    },
+    {
+      "width": 320,
+      "layout": "b",
+      "states": "pass"
+    },
+    {
+      "width": 320,
+      "layout": "c",
+      "states": "pass"
+    }
+  ]
+}

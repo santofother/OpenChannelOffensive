@@ -1,0 +1,74 @@
+{
+  "build": "0.1.0-p3+16fa18d",
+  "clients": {},
+  "conditions": {
+    "sim_jitter_ms": 0.0,
+    "sim_latency_ms_one_way_each_side": 0.0,
+    "sim_loss": 0.0,
+    "transport": "ENet localhost, headless, one machine"
+  },
+  "date": "2026-11-16T10:35:26",
+  "failures": 0,
+  "host": {
+    "budget_drops": 0,
+    "cmds": 1337,
+    "down_Bps": 8405.79068531964,
+    "dup_cmds": 1944,
+    "rewind_ticks_max": 0.0,
+    "rewind_ticks_mean": 0.0,
+    "secs": 11.294,
+    "sim_us_max": 2110.0,
+    "sim_us_mean": 284.389705882353,
+    "sim_us_p95": 788.0,
+    "sim_us_p99": 1580.0,
+    "stale_round_cmds": 6,
+    "starved_slot_ticks": 20,
+    "ticks": 680,
+    "up_Bps": 6924.91588454046
+  },
+  "players": 2,
+  "results": {
+    "voice_load": {
+      "actual_mouth_to_ear": "requires microphone/device test",
+      "codec_bytes_per_20ms": 163,
+      "host_wire_up_Bps_including_gameplay": 16058.7951807229,
+      "queue_ms": 60,
+      "seconds": 2.075,
+      "talkers": 2
+    },
+    "voice_radio_recipient_counts": {
+      "1": {
+        "enet_throttle": {
+          "948325205": 32.0
+        },
+        "epoch": 3,
+        "invalid": 0,
+        "pending": 0,
+        "pickups": 0,
+        "received": {},
+        "relays": {
+          "948325205": 25
+        },
+        "rpc_count": 0,
+        "sim_drops": 0,
+        "speakers": 0,
+        "stolen": {}
+      },
+      "948325205": {
+        "enet_throttle": {},
+        "epoch": 3,
+        "invalid": 0,
+        "pending": 0,
+        "pickups": 0,
+        "received": {
+          "1": 25
+        },
+        "relays": {},
+        "rpc_count": 25,
+        "sim_drops": 0,
+        "speakers": 0,
+        "stolen": {}
+      }
+    }
+  }
+}

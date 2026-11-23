@@ -1,0 +1,33 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[Net] Build 0.1.0-p4+16fa18d
+[UI] Steam disabled (--no-steam)
+[Net] Hosting (LAN) as 'Player'
+[UI] Hosting (LAN)
+[Match] started host=true id=1 sim=0ms±0 loss=0.000 lagcomp=true
+[Test] waiting for 2 players
+[Net] PEER_CONNECTED 900937587
+[Timing] t=96.693 host frame stall 133 ms
+[Net] REGISTERED 900937587 Player
+[Match] READY 900937587 'Player' team 1 (2 players)
+  PASS 2 players joined have 2
+[Test] players [1, 900937587] shooter=900937587 victim=1 placer2=1
+  PASS consistent: mutual player visibility
+[Test] voice: proximity + simultaneous radio, theft, lifecycle and six-talker load
+[Match] ROUND 2
+  PASS voice enemy available
+  PASS holding radio still sends proximity to nearby enemy peer=900937587 count=25 epoch=4 host_epoch=4
+  PASS death drops exactly one radio
+  PASS out-of-reach theft refused
+  PASS host-authorized theft succeeds
+  PASS dead speech never reaches living thief
+[Match] ROUND 3
+  PASS side swap clears radio ownership and audio queues 1
+  PASS side swap clears radio ownership and audio queues 900937587
+[Match] ROUND 4
+  PASS voice remains bounded under simultaneous talkers
+  PASS stale epoch/round, unregistered sender and malformed voice rejected
+  PASS nonverbal ping created
+[Match] ROUND 5
+NET_RESULT {"build":"0.1.0-p4+16fa18d","clients":{"900937587":{"corr_max_m":0.0,"corr_mean_m":0.0,"corrections":0,"down_Bps":3704.53633079085,"rtt_mean_ms":9.45633316040039,"rtt_p95_ms":12.6599998474121,"sim_dropped":0,"snaps":30,"stale_events":0,"stale_snaps":0,"up_Bps":4027.69971898836}},"conditions":{"sim_jitter_ms":0.0,"sim_latency_ms_one_way_each_side":0.0,"sim_loss":0.0,"transport":"ENet localhost, headless, one machine"},"date":"2026-11-16T15:45:09","failures":0,"host":{"budget_drops":0,"cmds":1472,"down_Bps":7844.97935654748,"dup_cmds":2066,"rewind_ticks_max":0.0,"rewind_ticks_mean":0.0,"secs":12.837,"sim_us_max":7500.0,"sim_us_mean":465.249676584735,"sim_us_p95":1225.0,"sim_us_p99":2591.0,"stale_round_cmds":8,"starved_slot_ticks":69,"ticks":773,"up_Bps":6506.50463503934},"players":2,"results":{"voice_load":{"actual_mouth_to_ear":"requires microphone/device test","codec_bytes_per_20ms":163,"host_wire_up_Bps_including_gameplay":15981.7745803357,"queue_ms":60,"seconds":2.085,"talkers":2},"voice_radio_recipient_counts":{"1":{"enet_throttle":{"900937587":32.0},"epoch":4,"invalid":0,"pending":0,"pickups":0,"received":{},"relays":{"900937587":25},"rpc_count":0,"sim_drops":0,"speakers":0,"stolen":{}},"900937587":{"enet_throttle":{},"epoch":4,"invalid":0,"pending":0,"pickups":0,"received":{"1":25},"relays":{},"rpc_count":25,"sim_drops":0,"speakers":0,"stolen":{}}}}}
+SMOKE_OK match players=2

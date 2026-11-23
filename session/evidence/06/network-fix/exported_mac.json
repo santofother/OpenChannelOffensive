@@ -1,0 +1,88 @@
+{
+  "build": "0.1.0-p4+16fa18d",
+  "clients": {
+    "900937587": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 3704.53633079085,
+      "rtt_mean_ms": 9.45633316040039,
+      "rtt_p95_ms": 12.6599998474121,
+      "sim_dropped": 0,
+      "snaps": 30,
+      "stale_events": 0,
+      "stale_snaps": 0,
+      "up_Bps": 4027.69971898836
+    }
+  },
+  "conditions": {
+    "sim_jitter_ms": 0.0,
+    "sim_latency_ms_one_way_each_side": 0.0,
+    "sim_loss": 0.0,
+    "transport": "ENet localhost, headless, one machine"
+  },
+  "date": "2026-11-16T15:45:09",
+  "failures": 0,
+  "host": {
+    "budget_drops": 0,
+    "cmds": 1472,
+    "down_Bps": 7844.97935654748,
+    "dup_cmds": 2066,
+    "rewind_ticks_max": 0.0,
+    "rewind_ticks_mean": 0.0,
+    "secs": 12.837,
+    "sim_us_max": 7500.0,
+    "sim_us_mean": 465.249676584735,
+    "sim_us_p95": 1225.0,
+    "sim_us_p99": 2591.0,
+    "stale_round_cmds": 8,
+    "starved_slot_ticks": 69,
+    "ticks": 773,
+    "up_Bps": 6506.50463503934
+  },
+  "players": 2,
+  "results": {
+    "voice_load": {
+      "actual_mouth_to_ear": "requires microphone/device test",
+      "codec_bytes_per_20ms": 163,
+      "host_wire_up_Bps_including_gameplay": 15981.7745803357,
+      "queue_ms": 60,
+      "seconds": 2.085,
+      "talkers": 2
+    },
+    "voice_radio_recipient_counts": {
+      "1": {
+        "enet_throttle": {
+          "900937587": 32.0
+        },
+        "epoch": 4,
+        "invalid": 0,
+        "pending": 0,
+        "pickups": 0,
+        "received": {},
+        "relays": {
+          "900937587": 25
+        },
+        "rpc_count": 0,
+        "sim_drops": 0,
+        "speakers": 0,
+        "stolen": {}
+      },
+      "900937587": {
+        "enet_throttle": {},
+        "epoch": 4,
+        "invalid": 0,
+        "pending": 0,
+        "pickups": 0,
+        "received": {
+          "1": 25
+        },
+        "relays": {},
+        "rpc_count": 25,
+        "sim_drops": 0,
+        "speakers": 0,
+        "stolen": {}
+      }
+    }
+  }
+}

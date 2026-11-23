@@ -1,0 +1,2252 @@
+[
+  {
+    "id": "a",
+    "name": "Switchboard",
+    "subtitle": "Diagonal sites / central connector",
+    "size": [
+      30,
+      24
+    ],
+    "bounds": [
+      -4,
+      -4,
+      38,
+      38
+    ],
+    "rooms": [
+      {
+        "name": "Reception",
+        "x": 0,
+        "y": 0,
+        "w": 9,
+        "h": 8,
+        "kind": "room",
+        "label": [
+          4.5,
+          4.0
+        ]
+      },
+      {
+        "name": "Meeting",
+        "x": 9,
+        "y": 0,
+        "w": 10,
+        "h": 8,
+        "kind": "room",
+        "label": [
+          14.0,
+          4.0
+        ]
+      },
+      {
+        "name": "A \u00b7 Server",
+        "x": 19,
+        "y": 0,
+        "w": 11,
+        "h": 8,
+        "kind": "siteA",
+        "label": [
+          24.5,
+          2
+        ]
+      },
+      {
+        "name": "Office",
+        "x": 0,
+        "y": 8,
+        "w": 9,
+        "h": 8,
+        "kind": "room",
+        "label": [
+          4.5,
+          12.0
+        ]
+      },
+      {
+        "name": "Connector",
+        "x": 9,
+        "y": 8,
+        "w": 12,
+        "h": 8,
+        "kind": "hall",
+        "label": [
+          15,
+          9.8
+        ]
+      },
+      {
+        "name": "Electrical",
+        "x": 21,
+        "y": 8,
+        "w": 9,
+        "h": 8,
+        "kind": "room",
+        "label": [
+          25.5,
+          12.0
+        ]
+      },
+      {
+        "name": "B \u00b7 Workshop",
+        "x": 0,
+        "y": 16,
+        "w": 12,
+        "h": 8,
+        "kind": "siteB",
+        "label": [
+          6,
+          18
+        ]
+      },
+      {
+        "name": "Archive",
+        "x": 12,
+        "y": 16,
+        "w": 9,
+        "h": 8,
+        "kind": "room",
+        "label": [
+          16.5,
+          20.0
+        ]
+      },
+      {
+        "name": "Loading",
+        "x": 21,
+        "y": 16,
+        "w": 9,
+        "h": 8,
+        "kind": "room",
+        "label": [
+          25.5,
+          20.0
+        ]
+      }
+    ],
+    "walls": [
+      {
+        "a": [
+          0,
+          0
+        ],
+        "b": [
+          30,
+          0
+        ],
+        "gaps": [
+          [
+            13.3,
+            14.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          30,
+          0
+        ],
+        "b": [
+          30,
+          24
+        ],
+        "gaps": [
+          [
+            11.3,
+            12.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          0,
+          24
+        ],
+        "b": [
+          30,
+          24
+        ],
+        "gaps": [
+          [
+            25.3,
+            26.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          0,
+          0
+        ],
+        "b": [
+          0,
+          24
+        ],
+        "gaps": [
+          [
+            11.3,
+            12.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          0,
+          8
+        ],
+        "b": [
+          30,
+          8
+        ],
+        "gaps": [
+          [
+            3.3,
+            4.7
+          ],
+          [
+            13.3,
+            14.7
+          ],
+          [
+            24.3,
+            25.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          0,
+          16
+        ],
+        "b": [
+          30,
+          16
+        ],
+        "gaps": [
+          [
+            4.3,
+            5.7
+          ],
+          [
+            15.3,
+            16.7
+          ],
+          [
+            25.3,
+            26.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          9,
+          0
+        ],
+        "b": [
+          9,
+          16
+        ],
+        "gaps": [
+          [
+            3.3,
+            4.7
+          ],
+          [
+            11.3,
+            12.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          19,
+          0
+        ],
+        "b": [
+          19,
+          8
+        ],
+        "gaps": [
+          [
+            3.3,
+            4.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          21,
+          8
+        ],
+        "b": [
+          21,
+          24
+        ],
+        "gaps": [
+          [
+            11.3,
+            12.7
+          ],
+          [
+            19.3,
+            20.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          12,
+          16
+        ],
+        "b": [
+          12,
+          24
+        ],
+        "gaps": [
+          [
+            19.3,
+            20.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      }
+    ],
+    "props": [
+      [
+        13,
+        11,
+        3,
+        2
+      ],
+      [
+        23,
+        3,
+        2,
+        2
+      ],
+      [
+        4,
+        20,
+        2,
+        2
+      ],
+      [
+        14,
+        18,
+        2,
+        1.3
+      ],
+      [
+        28,
+        27,
+        3,
+        1.5
+      ]
+    ],
+    "spawn": [
+      32,
+      31
+    ],
+    "sites": [
+      [
+        26,
+        5.5
+      ],
+      [
+        7.5,
+        20
+      ]
+    ],
+    "rotation": [
+      [
+        26,
+        5.5
+      ],
+      [
+        25,
+        5.5
+      ],
+      [
+        25,
+        9.5
+      ],
+      [
+        25,
+        12
+      ],
+      [
+        18,
+        12
+      ],
+      [
+        18,
+        14
+      ],
+      [
+        16,
+        14
+      ],
+      [
+        16,
+        17
+      ],
+      [
+        18,
+        17
+      ],
+      [
+        18,
+        20
+      ],
+      [
+        11,
+        20
+      ],
+      [
+        7.5,
+        20
+      ]
+    ],
+    "exampleCuts": [
+      [
+        [
+          23,
+          0
+        ],
+        [
+          25,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          18
+        ],
+        [
+          0,
+          20
+        ]
+      ],
+      [
+        [
+          13,
+          16
+        ],
+        [
+          15,
+          16
+        ]
+      ]
+    ],
+    "exampleReinforcements": [
+      [
+        [
+          26,
+          0
+        ],
+        [
+          28,
+          0
+        ]
+      ],
+      [
+        [
+          2,
+          24
+        ],
+        [
+          4,
+          24
+        ]
+      ],
+      [
+        [
+          9,
+          5
+        ],
+        [
+          9,
+          7
+        ]
+      ]
+    ]
+  },
+  {
+    "id": "b",
+    "name": "Lightwell",
+    "subtitle": "Interior sites / seven exterior starts",
+    "size": [
+      32,
+      28
+    ],
+    "bounds": [
+      -8,
+      -8,
+      48,
+      46
+    ],
+    "rooms": [
+      {
+        "name": "Reception",
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8,
+        "kind": "room",
+        "label": [
+          6.0,
+          4.0
+        ]
+      },
+      {
+        "name": "Conference",
+        "x": 12,
+        "y": 0,
+        "w": 10,
+        "h": 8,
+        "kind": "room",
+        "label": [
+          17.0,
+          4.0
+        ]
+      },
+      {
+        "name": "Server staging",
+        "x": 22,
+        "y": 0,
+        "w": 10,
+        "h": 3,
+        "kind": "room",
+        "label": [
+          27,
+          1.5
+        ]
+      },
+      {
+        "name": "",
+        "x": 22,
+        "y": 3,
+        "w": 2,
+        "h": 5,
+        "kind": "room",
+        "label": [
+          23,
+          5
+        ]
+      },
+      {
+        "name": "",
+        "x": 29,
+        "y": 3,
+        "w": 3,
+        "h": 5,
+        "kind": "room",
+        "label": [
+          30.5,
+          5
+        ]
+      },
+      {
+        "name": "",
+        "x": 22,
+        "y": 8,
+        "w": 10,
+        "h": 2,
+        "kind": "room",
+        "label": [
+          27,
+          9
+        ]
+      },
+      {
+        "name": "Lobby",
+        "x": 0,
+        "y": 8,
+        "w": 8,
+        "h": 12,
+        "kind": "room",
+        "label": [
+          4.0,
+          14.0
+        ]
+      },
+      {
+        "name": "North ring",
+        "x": 8,
+        "y": 8,
+        "w": 14,
+        "h": 2,
+        "kind": "hall",
+        "label": [
+          15.0,
+          9.0
+        ]
+      },
+      {
+        "name": "",
+        "x": 8,
+        "y": 10,
+        "w": 13,
+        "h": 1,
+        "kind": "hall",
+        "label": [
+          14.5,
+          10.5
+        ]
+      },
+      {
+        "name": "West",
+        "x": 8,
+        "y": 11,
+        "w": 3,
+        "h": 6,
+        "kind": "hall",
+        "label": [
+          9.5,
+          14.0
+        ]
+      },
+      {
+        "name": "Courtyard",
+        "x": 11,
+        "y": 11,
+        "w": 10,
+        "h": 6,
+        "kind": "yard",
+        "label": [
+          16.0,
+          14.0
+        ]
+      },
+      {
+        "name": "East",
+        "x": 21,
+        "y": 10,
+        "w": 3,
+        "h": 10,
+        "kind": "hall",
+        "label": [
+          22.5,
+          15.0
+        ]
+      },
+      {
+        "name": "South ring",
+        "x": 8,
+        "y": 17,
+        "w": 13,
+        "h": 3,
+        "kind": "hall",
+        "label": [
+          14.5,
+          18.5
+        ]
+      },
+      {
+        "name": "Electrical",
+        "x": 24,
+        "y": 10,
+        "w": 8,
+        "h": 10,
+        "kind": "room",
+        "label": [
+          28.0,
+          15.0
+        ]
+      },
+      {
+        "name": "Loading staging",
+        "x": 0,
+        "y": 20,
+        "w": 12,
+        "h": 2,
+        "kind": "room",
+        "label": [
+          2,
+          21
+        ]
+      },
+      {
+        "name": "",
+        "x": 0,
+        "y": 22,
+        "w": 3,
+        "h": 4,
+        "kind": "room",
+        "label": [
+          1.5,
+          24
+        ]
+      },
+      {
+        "name": "",
+        "x": 9,
+        "y": 22,
+        "w": 3,
+        "h": 4,
+        "kind": "room",
+        "label": [
+          10.5,
+          24
+        ]
+      },
+      {
+        "name": "",
+        "x": 0,
+        "y": 26,
+        "w": 12,
+        "h": 2,
+        "kind": "room",
+        "label": [
+          6,
+          27
+        ]
+      },
+      {
+        "name": "Workshop",
+        "x": 12,
+        "y": 20,
+        "w": 12,
+        "h": 8,
+        "kind": "room",
+        "label": [
+          19,
+          26.5
+        ]
+      },
+      {
+        "name": "Stores",
+        "x": 24,
+        "y": 20,
+        "w": 8,
+        "h": 8,
+        "kind": "room",
+        "label": [
+          28.0,
+          24.0
+        ]
+      },
+      {
+        "name": "A \u00b7 Server",
+        "x": 24,
+        "y": 3,
+        "w": 5,
+        "h": 5,
+        "kind": "siteA",
+        "label": [
+          26.5,
+          4
+        ]
+      },
+      {
+        "name": "B \u00b7 Loading",
+        "x": 3,
+        "y": 22,
+        "w": 6,
+        "h": 4,
+        "kind": "siteB",
+        "label": [
+          6,
+          25.5
+        ]
+      }
+    ],
+    "walls": [
+      {
+        "a": [
+          0,
+          0
+        ],
+        "b": [
+          32,
+          0
+        ],
+        "gaps": [
+          [
+            15.3,
+            16.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          32,
+          0
+        ],
+        "b": [
+          32,
+          28
+        ],
+        "gaps": [
+          [
+            14.3,
+            15.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          0,
+          28
+        ],
+        "b": [
+          32,
+          28
+        ],
+        "gaps": [
+          [
+            16.3,
+            17.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          0,
+          0
+        ],
+        "b": [
+          0,
+          28
+        ],
+        "gaps": [
+          [
+            13.3,
+            14.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          0,
+          8
+        ],
+        "b": [
+          22,
+          8
+        ],
+        "gaps": [
+          [
+            4.3,
+            5.7
+          ],
+          [
+            15.3,
+            16.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          12,
+          0
+        ],
+        "b": [
+          12,
+          8
+        ],
+        "gaps": [
+          [
+            3.3,
+            4.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          8,
+          8
+        ],
+        "b": [
+          8,
+          20
+        ],
+        "gaps": [
+          [
+            13.3,
+            14.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          22,
+          0
+        ],
+        "b": [
+          22,
+          10
+        ],
+        "gaps": [
+          [
+            8.2,
+            9.6
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          22,
+          10
+        ],
+        "b": [
+          32,
+          10
+        ],
+        "gaps": [
+          [
+            26.3,
+            27.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          24,
+          10
+        ],
+        "b": [
+          24,
+          20
+        ],
+        "gaps": [
+          [
+            14.3,
+            15.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          0,
+          20
+        ],
+        "b": [
+          32,
+          20
+        ],
+        "gaps": [
+          [
+            4.3,
+            5.7
+          ],
+          [
+            16.3,
+            17.7
+          ],
+          [
+            27.3,
+            28.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          12,
+          20
+        ],
+        "b": [
+          12,
+          28
+        ],
+        "gaps": [
+          [
+            23.3,
+            24.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          24,
+          20
+        ],
+        "b": [
+          24,
+          28
+        ],
+        "gaps": [
+          [
+            23.3,
+            24.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          11,
+          11
+        ],
+        "b": [
+          21,
+          11
+        ],
+        "gaps": [
+          [
+            15.3,
+            16.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          21,
+          11
+        ],
+        "b": [
+          21,
+          17
+        ],
+        "gaps": [],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          11,
+          17
+        ],
+        "b": [
+          21,
+          17
+        ],
+        "gaps": [
+          [
+            15.3,
+            16.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          11,
+          11
+        ],
+        "b": [
+          11,
+          17
+        ],
+        "gaps": [],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          24,
+          3
+        ],
+        "b": [
+          29,
+          3
+        ],
+        "gaps": [],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          29,
+          3
+        ],
+        "b": [
+          29,
+          8
+        ],
+        "gaps": [],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          24,
+          8
+        ],
+        "b": [
+          29,
+          8
+        ],
+        "gaps": [
+          [
+            26.3,
+            27.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          24,
+          3
+        ],
+        "b": [
+          24,
+          8
+        ],
+        "gaps": [
+          [
+            4.3,
+            5.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          3,
+          22
+        ],
+        "b": [
+          9,
+          22
+        ],
+        "gaps": [
+          [
+            5.3,
+            6.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          9,
+          22
+        ],
+        "b": [
+          9,
+          26
+        ],
+        "gaps": [
+          [
+            23.3,
+            24.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          3,
+          26
+        ],
+        "b": [
+          9,
+          26
+        ],
+        "gaps": [],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          3,
+          22
+        ],
+        "b": [
+          3,
+          26
+        ],
+        "gaps": [],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          0,
+          4
+        ],
+        "b": [
+          8,
+          4
+        ],
+        "gaps": [
+          [
+            3.3,
+            4.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          8,
+          0
+        ],
+        "b": [
+          8,
+          8
+        ],
+        "gaps": [
+          [
+            1.3,
+            2.7
+          ],
+          [
+            5.3,
+            6.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          17,
+          0
+        ],
+        "b": [
+          17,
+          8
+        ],
+        "gaps": [
+          [
+            1.3,
+            2.7
+          ],
+          [
+            5.3,
+            6.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          0,
+          16
+        ],
+        "b": [
+          8,
+          16
+        ],
+        "gaps": [
+          [
+            3.3,
+            4.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          28,
+          10
+        ],
+        "b": [
+          28,
+          18
+        ],
+        "gaps": [
+          [
+            11.3,
+            12.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          18,
+          20
+        ],
+        "b": [
+          18,
+          28
+        ],
+        "gaps": [
+          [
+            21.3,
+            22.7
+          ],
+          [
+            25.3,
+            26.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      }
+    ],
+    "props": [
+      [
+        4,
+        10,
+        2,
+        2
+      ],
+      [
+        19,
+        3,
+        1,
+        2
+      ],
+      [
+        30,
+        3,
+        1,
+        2
+      ],
+      [
+        29,
+        12,
+        2,
+        2
+      ],
+      [
+        20,
+        23,
+        2,
+        2
+      ],
+      [
+        14,
+        13,
+        1,
+        2
+      ],
+      [
+        31.5,
+        30,
+        2,
+        2
+      ],
+      [
+        12.5,
+        -3.45,
+        7,
+        1.1
+      ],
+      [
+        33.85,
+        11.5,
+        1.1,
+        7
+      ],
+      [
+        13.5,
+        30.15,
+        7,
+        1.1
+      ],
+      [
+        -3.2,
+        10.5,
+        1.1,
+        7
+      ],
+      [
+        27,
+        -4.05,
+        11.75,
+        1
+      ],
+      [
+        28.25,
+        32.25,
+        9.5,
+        1
+      ],
+      [
+        -7.05,
+        31.85,
+        10.9,
+        0.9
+      ]
+    ],
+    "sites": [
+      [
+        26.5,
+        5.8
+      ],
+      [
+        6,
+        24
+      ]
+    ],
+    "rotation": [
+      [
+        26.5,
+        5.8
+      ],
+      [
+        25,
+        5
+      ],
+      [
+        23,
+        5
+      ],
+      [
+        23,
+        9
+      ],
+      [
+        20,
+        9
+      ],
+      [
+        16,
+        9
+      ],
+      [
+        16,
+        12
+      ],
+      [
+        18,
+        12
+      ],
+      [
+        18,
+        15.5
+      ],
+      [
+        16,
+        15.5
+      ],
+      [
+        16,
+        18.5
+      ],
+      [
+        9.5,
+        18.5
+      ],
+      [
+        9.5,
+        14
+      ],
+      [
+        5,
+        14
+      ],
+      [
+        4,
+        14
+      ],
+      [
+        4,
+        17
+      ],
+      [
+        5,
+        17
+      ],
+      [
+        5,
+        21
+      ],
+      [
+        6,
+        21
+      ],
+      [
+        6,
+        24
+      ]
+    ],
+    "exampleCuts": [
+      [
+        [
+          25,
+          0
+        ],
+        [
+          27,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          23
+        ],
+        [
+          0,
+          25
+        ]
+      ],
+      [
+        [
+          11,
+          13
+        ],
+        [
+          11,
+          15
+        ]
+      ]
+    ],
+    "exampleReinforcements": [
+      [
+        [
+          29,
+          0
+        ],
+        [
+          31,
+          0
+        ]
+      ],
+      [
+        [
+          5,
+          28
+        ],
+        [
+          7,
+          28
+        ]
+      ],
+      [
+        [
+          21,
+          13
+        ],
+        [
+          21,
+          15
+        ]
+      ]
+    ],
+    "map_id": "lightwell",
+    "revision": 3,
+    "wall_height": 2.8,
+    "wall_thickness": 0.2,
+    "door_height": 2.1,
+    "max_cell_width": 2.0,
+    "defend_spawns": [
+      [
+        30,
+        7.5,
+        90
+      ],
+      [
+        8,
+        25.5,
+        0
+      ],
+      [
+        18.5,
+        18.5,
+        0
+      ]
+    ],
+    "prop_heights": [
+      1.2,
+      0.8,
+      2.1,
+      1.8,
+      1.05,
+      0.55,
+      1.0,
+      2.35,
+      2.35,
+      2.35,
+      2.35,
+      2.35,
+      2.35,
+      2.35
+    ],
+    "attack_zones": [
+      {
+        "name": "Southeast",
+        "spawns": [
+          [
+            35,
+            34.4,
+            35
+          ],
+          [
+            36.35,
+            34.4,
+            35
+          ],
+          [
+            35.65,
+            35.7,
+            35
+          ]
+        ]
+      },
+      {
+        "name": "North",
+        "spawns": [
+          [
+            15.25,
+            -5.5,
+            180
+          ],
+          [
+            16.6,
+            -5.5,
+            180
+          ],
+          [
+            15.9,
+            -6.8,
+            180
+          ]
+        ]
+      },
+      {
+        "name": "Northeast",
+        "spawns": [
+          [
+            35,
+            -4.8,
+            135
+          ],
+          [
+            36.35,
+            -4.8,
+            135
+          ],
+          [
+            35.65,
+            -6.1,
+            135
+          ]
+        ]
+      },
+      {
+        "name": "East",
+        "spawns": [
+          [
+            37.15,
+            14.3,
+            90
+          ],
+          [
+            37.15,
+            15.65,
+            90
+          ],
+          [
+            38.45,
+            14.95,
+            90
+          ]
+        ]
+      },
+      {
+        "name": "South",
+        "spawns": [
+          [
+            16.35,
+            33.9,
+            0
+          ],
+          [
+            17.7,
+            33.9,
+            0
+          ],
+          [
+            17,
+            35.2,
+            0
+          ]
+        ]
+      },
+      {
+        "name": "Southwest",
+        "spawns": [
+          [
+            -5.45,
+            33.5,
+            -42
+          ],
+          [
+            -4.1,
+            33.5,
+            -42
+          ],
+          [
+            -4.8,
+            34.8,
+            -42
+          ]
+        ]
+      },
+      {
+        "name": "West",
+        "spawns": [
+          [
+            -5.35,
+            13.35,
+            -90
+          ],
+          [
+            -5.35,
+            14.7,
+            -90
+          ],
+          [
+            -6.65,
+            14,
+            -90
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c",
+    "name": "Twin Wing",
+    "subtitle": "Parallel sites / shared server room",
+    "size": [
+      28,
+      24
+    ],
+    "bounds": [
+      -4,
+      -4,
+      36,
+      38
+    ],
+    "rooms": [
+      {
+        "name": "A \u00b7 Records",
+        "x": 0,
+        "y": 0,
+        "w": 10,
+        "h": 10,
+        "kind": "siteA",
+        "label": [
+          5,
+          1.8
+        ]
+      },
+      {
+        "name": "Server",
+        "x": 10,
+        "y": 0,
+        "w": 8,
+        "h": 10,
+        "kind": "room",
+        "label": [
+          14,
+          1
+        ]
+      },
+      {
+        "name": "B \u00b7 Electrical",
+        "x": 18,
+        "y": 0,
+        "w": 10,
+        "h": 10,
+        "kind": "siteB",
+        "label": [
+          23,
+          1.8
+        ]
+      },
+      {
+        "name": "Office wing",
+        "x": 0,
+        "y": 10,
+        "w": 10,
+        "h": 8,
+        "kind": "room",
+        "label": [
+          5,
+          11.5
+        ]
+      },
+      {
+        "name": "Cross hall",
+        "x": 10,
+        "y": 10,
+        "w": 8,
+        "h": 4,
+        "kind": "hall",
+        "label": [
+          14.0,
+          12.0
+        ]
+      },
+      {
+        "name": "Utility",
+        "x": 10,
+        "y": 14,
+        "w": 8,
+        "h": 4,
+        "kind": "room",
+        "label": [
+          14.0,
+          16.0
+        ]
+      },
+      {
+        "name": "Service wing",
+        "x": 18,
+        "y": 10,
+        "w": 10,
+        "h": 8,
+        "kind": "room",
+        "label": [
+          23,
+          11.5
+        ]
+      },
+      {
+        "name": "Loading lobby",
+        "x": 0,
+        "y": 18,
+        "w": 28,
+        "h": 6,
+        "kind": "room",
+        "label": [
+          14,
+          19.5
+        ]
+      }
+    ],
+    "walls": [
+      {
+        "a": [
+          0,
+          0
+        ],
+        "b": [
+          28,
+          0
+        ],
+        "gaps": [
+          [
+            13.3,
+            14.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          28,
+          0
+        ],
+        "b": [
+          28,
+          24
+        ],
+        "gaps": [
+          [
+            13.3,
+            14.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          0,
+          24
+        ],
+        "b": [
+          28,
+          24
+        ],
+        "gaps": [
+          [
+            3.3,
+            4.7
+          ],
+          [
+            23.3,
+            24.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          0,
+          0
+        ],
+        "b": [
+          0,
+          24
+        ],
+        "gaps": [
+          [
+            13.3,
+            14.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          10,
+          0
+        ],
+        "b": [
+          10,
+          10
+        ],
+        "gaps": [
+          [
+            3.3,
+            4.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          18,
+          0
+        ],
+        "b": [
+          18,
+          10
+        ],
+        "gaps": [
+          [
+            6.3,
+            7.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          0,
+          10
+        ],
+        "b": [
+          28,
+          10
+        ],
+        "gaps": [
+          [
+            3.3,
+            4.7
+          ],
+          [
+            13.3,
+            14.7
+          ],
+          [
+            23.3,
+            24.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          10,
+          10
+        ],
+        "b": [
+          10,
+          18
+        ],
+        "gaps": [
+          [
+            11.3,
+            12.7
+          ],
+          [
+            15.3,
+            16.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          18,
+          10
+        ],
+        "b": [
+          18,
+          18
+        ],
+        "gaps": [
+          [
+            11.3,
+            12.7
+          ],
+          [
+            15.3,
+            16.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          10,
+          14
+        ],
+        "b": [
+          18,
+          14
+        ],
+        "gaps": [
+          [
+            13.3,
+            14.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      },
+      {
+        "a": [
+          0,
+          18
+        ],
+        "b": [
+          28,
+          18
+        ],
+        "gaps": [
+          [
+            3.3,
+            4.7
+          ],
+          [
+            13.3,
+            14.7
+          ],
+          [
+            23.3,
+            24.7
+          ]
+        ],
+        "destructible": true,
+        "reinforceable": true
+      }
+    ],
+    "props": [
+      [
+        4,
+        4,
+        2,
+        2
+      ],
+      [
+        22,
+        4,
+        2,
+        2
+      ],
+      [
+        13,
+        2,
+        2,
+        5
+      ],
+      [
+        4,
+        13,
+        2,
+        2
+      ],
+      [
+        22,
+        13,
+        2,
+        2
+      ],
+      [
+        11,
+        21,
+        6,
+        1
+      ],
+      [
+        12,
+        26,
+        4,
+        2
+      ]
+    ],
+    "spawn": [
+      14,
+      31
+    ],
+    "sites": [
+      [
+        7,
+        7.5
+      ],
+      [
+        25,
+        7.5
+      ]
+    ],
+    "rotation": [
+      [
+        7,
+        7.5
+      ],
+      [
+        8.5,
+        7.5
+      ],
+      [
+        8.5,
+        4
+      ],
+      [
+        11.5,
+        4
+      ],
+      [
+        11.5,
+        8.5
+      ],
+      [
+        16,
+        8.5
+      ],
+      [
+        16,
+        7
+      ],
+      [
+        20,
+        7
+      ],
+      [
+        25,
+        7.5
+      ]
+    ],
+    "exampleCuts": [
+      [
+        [
+          0,
+          6
+        ],
+        [
+          0,
+          8
+        ]
+      ],
+      [
+        [
+          28,
+          6
+        ],
+        [
+          28,
+          8
+        ]
+      ],
+      [
+        [
+          10,
+          7
+        ],
+        [
+          10,
+          9
+        ]
+      ]
+    ],
+    "exampleReinforcements": [
+      [
+        [
+          2,
+          0
+        ],
+        [
+          4,
+          0
+        ]
+      ],
+      [
+        [
+          24,
+          0
+        ],
+        [
+          26,
+          0
+        ]
+      ],
+      [
+        [
+          18,
+          2
+        ],
+        [
+          18,
+          4
+        ]
+      ]
+    ]
+  }
+]

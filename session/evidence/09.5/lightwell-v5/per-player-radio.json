@@ -1,0 +1,140 @@
+{
+  "build": "0.1.0-p19+83eb05f",
+  "clients": {
+    "1387315276": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 17779.9253984401,
+      "rtt_mean_ms": 121.399001439412,
+      "rtt_p95_ms": 138.240005493164,
+      "sim_dropped": 12,
+      "snaps": 518,
+      "stale_events": 0,
+      "stale_snaps": 0,
+      "up_Bps": 7973.13590294262
+    },
+    "1534660255": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 19617.2502652721,
+      "rtt_mean_ms": 123.302744547526,
+      "rtt_p95_ms": 144.339004516602,
+      "sim_dropped": 8,
+      "snaps": 515,
+      "stale_events": 0,
+      "stale_snaps": 1,
+      "up_Bps": 7541.83719872669
+    }
+  },
+  "conditions": {
+    "sim_jitter_ms": 10.0,
+    "sim_latency_ms_one_way_each_side": 50.0,
+    "sim_loss": 0.02,
+    "transport": "ENet localhost, headless, one machine"
+  },
+  "date": "2026-11-21T12:14:22",
+  "failures": 0,
+  "host": {
+    "budget_drops": 0,
+    "cmds": 6335,
+    "down_Bps": 21469.5637058926,
+    "dup_cmds": 13365,
+    "rewind_ticks_max": 0.0,
+    "rewind_ticks_mean": 0.0,
+    "secs": 28.765,
+    "sim_us_max": 9592.0,
+    "sim_us_mean": 302.289687137891,
+    "sim_us_p95": 526.0,
+    "sim_us_p99": 741.0,
+    "stale_round_cmds": 87,
+    "starved_slot_ticks": 1138,
+    "ticks": 1726,
+    "up_Bps": 50359.707978446
+  },
+  "players": 3,
+  "results": {
+    "voice_load": {
+      "actual_mouth_to_ear": "requires microphone/device test",
+      "codec_bytes_per_20ms": 163,
+      "host_wire_up_Bps_including_gameplay": 160771.944922547,
+      "queue_ms": 60,
+      "seconds": 2.324,
+      "talkers": 4
+    },
+    "voice_radio_recipient_counts": {
+      "1": {
+        "bot_radio": 1,
+        "enet_throttle": {
+          "1387315276": 32.0,
+          "1534660255": 32.0,
+          "1614956773": 32.0
+        },
+        "epoch": 5,
+        "invalid": 0,
+        "muted_enemy": false,
+        "pending": 0,
+        "pickups": 0,
+        "received": {},
+        "relays": {
+          "1387315276": 25,
+          "1534660255": 25
+        },
+        "rpc_count": 0,
+        "sim_drops": 0,
+        "speakers": 0,
+        "stolen": {}
+      },
+      "1387315276": {
+        "bot_radio": 0,
+        "enet_throttle": {},
+        "epoch": 5,
+        "invalid": 0,
+        "muted_enemy": false,
+        "pending": 0,
+        "pickups": 0,
+        "received": {
+          "1": 25
+        },
+        "relays": {},
+        "rpc_count": 25,
+        "sim_drops": 0,
+        "speakers": 0,
+        "stolen": {}
+      },
+      "1534660255": {
+        "bot_radio": 1,
+        "enet_throttle": {},
+        "epoch": 5,
+        "invalid": 0,
+        "muted_enemy": false,
+        "pending": 0,
+        "pickups": 0,
+        "received": {
+          "1": 24
+        },
+        "relays": {},
+        "rpc_count": 25,
+        "sim_drops": 1,
+        "speakers": 0,
+        "stolen": {}
+      },
+      "1614956773": {
+        "bot_radio": 0,
+        "enet_throttle": {},
+        "epoch": 5,
+        "invalid": 0,
+        "muted_enemy": false,
+        "pending": 0,
+        "pickups": 0,
+        "received": {},
+        "relays": {},
+        "rpc_count": 0,
+        "sim_drops": 0,
+        "speakers": 0,
+        "stolen": {}
+      }
+    }
+  }
+}

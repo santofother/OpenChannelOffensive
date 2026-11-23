@@ -1,0 +1,53 @@
+{
+  "build": "0.1.0-p10+83eb05f",
+  "clients": {
+    "1696303232": {
+      "corr_max_m": 0.0,
+      "corr_mean_m": 0.0,
+      "corrections": 0,
+      "down_Bps": 28117.3546574454,
+      "rtt_mean_ms": 8.07037038714797,
+      "rtt_p95_ms": 14.2209997177124,
+      "sim_dropped": 0,
+      "snaps": 278,
+      "stale_events": 0,
+      "stale_snaps": 0,
+      "up_Bps": 9688.85526979324
+    }
+  },
+  "conditions": {
+    "sim_jitter_ms": 0.0,
+    "sim_latency_ms_one_way_each_side": 0.0,
+    "sim_loss": 0.0,
+    "transport": "ENet localhost, headless, one machine"
+  },
+  "date": "2026-11-16T21:44:34",
+  "failures": 0,
+  "host": {
+    "budget_drops": 0,
+    "cmds": 3474,
+    "down_Bps": 8507.72097976571,
+    "dup_cmds": 4910,
+    "rewind_ticks_max": 0.0,
+    "rewind_ticks_mean": 0.0,
+    "secs": 30.048,
+    "sim_us_max": 7924.0,
+    "sim_us_mean": 304.730897009967,
+    "sim_us_p95": 670.0,
+    "sim_us_p99": 1704.0,
+    "stale_round_cmds": 18,
+    "starved_slot_ticks": 211,
+    "ticks": 1806,
+    "up_Bps": 24291.6001064963
+  },
+  "players": 2,
+  "results": {
+    "lightwell": {
+      "both_sites": true,
+      "cells": 161,
+      "identity": "lightwell/v1/98c8d84564097a7dc9b71cd96dc16290fa23d76d540a7e74b5752b635ae56097",
+      "resets": 10,
+      "six_rounds": true
+    }
+  }
+}

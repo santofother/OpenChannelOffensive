@@ -8,23 +8,31 @@ extends Node3D
 
 const VM_FOV := GearModels.VM_FOV
 ## Per item: hip = where the model origin sits relative to the camera, ads = distance of the Sight socket from the eye.
-const VIEW_DEFAULT := {"hip": Vector3(0.078, -0.128, -0.30), "ads": 0.18, "arm_r": "ArmR_Grip", "arm_l": "ArmL_Fore", "tilt": 1.0, "rot": Vector3(0.6, 3.2, -3.0)}
+## Long guns sit in the lower right with the muzzle converging on the crosshair, so the left side of the
+## receiver and the support arm's diagonal read clearly (the common shooter framing, e.g. Insurgency-style hip).
+const VIEW_DEFAULT := {"hip": Vector3(0.115, -0.15, -0.31), "ads": 0.24, "arm_r": "ArmR_Grip", "arm_l": "ArmL_Fore", "tilt": 1.0, "rot": Vector3(1.2, 5.5, -5.0)}
 const VIEW := {
-	"p9": {"hip": Vector3(0.075, -0.125, -0.36), "ads": 0.42, "arm_r": "ArmR_Pistol", "arm_l": "ArmL_Support", "rot": Vector3(0.0, 2.0, -2.0)},
-	"p9_match": {"hip": Vector3(0.075, -0.125, -0.36), "ads": 0.42, "arm_r": "ArmR_Pistol", "arm_l": "ArmL_Support", "rot": Vector3(0.0, 2.0, -2.0)},
-	"revolver": {"hip": Vector3(0.075, -0.125, -0.36), "ads": 0.42, "arm_r": "ArmR_Pistol", "arm_l": "ArmL_Support", "rot": Vector3(0.0, 2.0, -2.0)},
-	"smg": {"hip": Vector3(0.085, -0.14, -0.36), "ads": 0.17},
-	"marksman": {"hip": Vector3(0.088, -0.142, -0.37), "ads": 0.085},
+	"p9": {"hip": Vector3(0.07, -0.122, -0.40), "ads": 0.42, "arm_r": "ArmR_Pistol", "arm_l": "ArmL_Support", "rot": Vector3(-1.0, 2.0, -2.0)},
+	"p9_match": {"hip": Vector3(0.07, -0.122, -0.40), "ads": 0.42, "arm_r": "ArmR_Pistol", "arm_l": "ArmL_Support", "rot": Vector3(-1.0, 2.0, -2.0)},
+	"revolver": {"hip": Vector3(0.07, -0.122, -0.40), "ads": 0.42, "arm_r": "ArmR_Pistol", "arm_l": "ArmL_Support", "rot": Vector3(-1.0, 2.0, -2.0)},
+	"smg": {"hip": Vector3(0.11, -0.15, -0.36), "ads": 0.23},
+	"marksman": {"hip": Vector3(0.115, -0.15, -0.37), "ads": 0.085},
 	"ordinary": {"hip": Vector3(0.05, -0.20, -0.36), "arm_r": "ArmR_Hold", "arm_l": "ArmL_Hold"},
-	"heavy": {"hip": Vector3(0.04, -0.21, -0.38), "arm_r": "ArmR_Hold", "arm_l": "ArmL_Hold"},
+	"heavy": {"hip": Vector3(0.04, -0.21, -0.52), "arm_r": "ArmR_Hold", "arm_l": "ArmL_Hold"},
 	"kit": {"hip": Vector3(0.04, -0.21, -0.38), "arm_r": "ArmR_Hold", "arm_l": "ArmL_Hold"},
 	"medkit": {"hip": Vector3(0.05, -0.20, -0.36), "arm_r": "ArmR_Hold", "arm_l": "ArmL_Hold"},
 	"frag": {"hip": Vector3(0.13, -0.17, -0.36), "arm_r": "ArmR_Hold", "arm_l": ""},
 	"flash": {"hip": Vector3(0.13, -0.17, -0.36), "arm_r": "ArmR_Hold", "arm_l": ""},
 	"smoke": {"hip": Vector3(0.13, -0.17, -0.36), "arm_r": "ArmR_Hold", "arm_l": ""},
 	"incendiary": {"hip": Vector3(0.13, -0.17, -0.36), "arm_r": "ArmR_Hold", "arm_l": ""},
+	## Empty hands: the medkit's carry pose with only the arms visible (nothing of that item owned).
+	"hands": {"hip": Vector3(0.05, -0.23, -0.36), "arm_r": "ArmR_Hold", "arm_l": "ArmL_Hold", "base": "medkit"},
+	## The carried bomb (attackers' slot 5) borrows the heavy charge's block model.
+	"bomb": {"hip": Vector3(0.04, -0.21, -0.48), "arm_r": "ArmR_Hold", "arm_l": "ArmL_Hold", "base": "heavy"},
 }
+const EMPTY_HANDS := "hands"
 const MAX_CASINGS := 6
+const THROW_DURATION := .39
 
 var loadout: Loadout
 var _items := {} ## key -> {root, anim, hip, ads, rest, muzzle, eject, model}
@@ -37,6 +45,7 @@ var _bob_t := 0.0
 var _shots := 0
 var _was_reloading := false
 var _was_using := false
+var _throw_left := 0.0
 var _sway := Vector2.ZERO
 var _last_yaw := 0.0
 var _last_pitch := 0.0
@@ -67,11 +76,21 @@ func setup(l: Loadout) -> void:
 	loadout.player.camera.add_child.call_deferred(fill)
 
 
-## Which item the loadout is holding ("" = nothing to show).
+## Which item the loadout is holding ("" = nothing to show). A selected tool the player has none of
+## (no charges, kits, medkits or that grenade) shows empty hands instead of the item.
 func item_key() -> String:
 	if loadout.is_gun():
 		return loadout.weapon_id()
-	return Loadout.tool_key(loadout.tool)
+	if loadout.tool == Loadout.Tool.HOLSTER:
+		return EMPTY_HANDS
+	if loadout.tool == Loadout.Tool.BOMB:
+		return "bomb"
+	var key := Loadout.tool_key(loadout.tool)
+	if key != "" and int(loadout.charges.get(loadout.tool, 0)) <= 0 and loadout.install_left <= 0.0 and _throw_left <= 0.0:
+		if _shown == key and int(current().get("last_count", 0)) > 0:
+			return key # the last grenade just left the hand: let this frame start its throw motion
+		return EMPTY_HANDS
+	return key
 
 
 func current() -> Dictionary:
@@ -83,9 +102,10 @@ func _item(key: String) -> Dictionary:
 		return _items[key]
 	var view: Dictionary = VIEW_DEFAULT.duplicate()
 	view.merge(VIEW.get(key, {}), true)
-	var path := model_path(key)
+	var path := model_path(String(view.get("base", key)))
 	var root := GearModels.instance(path, true)
 	var it := {"model": root != null, "hip": view.hip, "ads_pos": Vector3(0.0, -0.093, -0.24), "anim": null, "rest": {}, "muzzle": null, "eject": null, "tilt": view.tilt, "rot": view.rot if root != null else Vector3.ZERO}
+	var arms: Array[Node3D] = []
 	if root == null:
 		root = _placeholder(key)
 		it.hip = Vector3(0.15, -0.16, -0.32)
@@ -98,6 +118,35 @@ func _item(key: String) -> Dictionary:
 				var arm := GearModels.piece("weapons/hands", pair[1], true)
 				if arm:
 					s.add_child(arm)
+					arms.append(arm)
+		for pair in [["flashlight", "Rail_Side", 1], ["laser", "Rail_Side_R", 2]]:
+			var mount := GearModels.socket(root, pair[1])
+			if mount:
+				var attachment := GearModels.instance("attachments/" + pair[0], true)
+				if attachment:
+					attachment.name = "Attachment_" + pair[0]
+					attachment.set_meta("gadget_bit", pair[2])
+					mount.add_child(attachment)
+		var muzzle := GearModels.socket(root, "Muzzle")
+		if muzzle:
+			# Procedural suppressor tube (no modelled asset yet), shown when the silencer is owned.
+			var can := MeshInstance3D.new()
+			var cyl := CylinderMesh.new()
+			cyl.top_radius = 0.017
+			cyl.bottom_radius = 0.017
+			cyl.height = 0.15
+			cyl.radial_segments = 14
+			can.mesh = cyl
+			var mat := StandardMaterial3D.new()
+			mat.albedo_color = Color(0.07, 0.07, 0.075)
+			mat.roughness = 0.55
+			mat.metallic = 0.6
+			can.material_override = mat
+			can.name = "Attachment_silencer"
+			can.set_meta("gadget_bit", 8)
+			can.rotation.x = PI * 0.5
+			can.position = _local_to(root, muzzle) + Vector3(0, 0, -0.075)
+			root.add_child(can)
 		var sight := GearModels.socket(root, "Sight")
 		if sight:
 			var sp: Vector3 = root.transform * _local_to(root, sight)
@@ -112,6 +161,8 @@ func _item(key: String) -> Dictionary:
 			it.rest[n] = n.transform
 	for mi: MeshInstance3D in root.find_children("*", "MeshInstance3D", true, false):
 		mi.layers = 3
+		if view.has("base") and not arms.any(func(a: Node3D) -> bool: return a.is_ancestor_of(mi)):
+			mi.visible = false # empty hands: keep the gloves/sleeves, hide the borrowed item
 	root.visible = false
 	add_child(root)
 	it["root"] = root
@@ -182,6 +233,16 @@ func _process(delta: float) -> void:
 	if it.is_empty():
 		return
 	var root: Node3D = it.root
+	_throw_left = maxf(0.0, _throw_left - delta)
+	var grenade := loadout.tool >= Loadout.Tool.FRAG and loadout.tool <= Loadout.Tool.INCENDIARY and _shown != EMPTY_HANDS
+	if grenade:
+		var count := int(loadout.charges.get(loadout.tool, 0))
+		if count < int(it.get("last_count", count)):
+			_throw_left = THROW_DURATION
+			_play(it, "pin", .13)
+		it["last_count"] = count
+	for attachment: Node3D in root.find_children("Attachment_*", "Node3D", true, false):
+		attachment.visible = loadout.gadgets_owned & int(attachment.get_meta("gadget_bit")) != 0
 	if not it.model and gun:
 		root.scale.z = float(Weapons.DEFS[loadout.weapon_id()].look)
 	_ads = move_toward(_ads, 1.0 if loadout.aiming else 0.0, delta * 7.0)
@@ -240,6 +301,13 @@ func _process(delta: float) -> void:
 		deg_to_rad(hr.z - 20.0 * reload_k * tilt) - _sway.x * 1.2)
 	# scoped guns hand over to the 2D scope overlay at full ADS
 	root.visible = not (gun and _ads > 0.92 and scoped())
+	if grenade:
+		var progress := 1.0 - _throw_left / THROW_DURATION
+		var swing := smoothstep(0.0, .18, progress) * (1.0 - smoothstep(.22, .85, progress))
+		position += Vector3(-.025, .145, -.18) * swing
+		rotation += Vector3(-.96, .18, -.29) * swing
+		root.visible = int(loadout.charges.get(loadout.tool, 0)) > 0 or _throw_left > 0.0
+	_pose_arms(root)
 	_tick_fx(delta)
 
 
@@ -381,6 +449,15 @@ func _placeholder(key: String) -> Node3D:
 		_box(n, Vector3(0.065, 0.055, 0.1), Vector3(-0.02, -0.08, -0.3), glove)
 		_limb(n, Vector3(-0.03, -0.1, -0.27), Vector3(-0.3, -0.38, 0.05), 0.07, sleeve)
 		return n
+	if key == EMPTY_HANDS:
+		var hands := Node3D.new()
+		hands.position = Vector3(0.0, -0.2, -0.36)
+		for side in [-1.0, 1.0]:
+			_box(hands, Vector3(0.07, 0.06, 0.09), Vector3(0.09 * side, -0.01, 0.0), glove)
+			_limb(hands, Vector3(0.1 * side, -0.02, 0.04), Vector3(0.22 * side, -0.1, 0.4), 0.07, sleeve)
+		var holder0 := Node3D.new()
+		holder0.add_child(hands)
+		return holder0
 	var col := Color(0.55, 0.5, 0.36)
 	var size := Vector3(0.14, 0.06, 0.22)
 	match key:
@@ -456,3 +533,48 @@ func _cyl(parent: Node3D, r: float, length: float, pos: Vector3, mat: Material) 
 	mi.rotation_degrees = Vector3(90, 0, 0)
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	parent.add_child(mi)
+
+
+## Hand bones stay on the authored grip socket; the sleeve points back toward a camera-space elbow.
+## A replacement skinned mesh can reuse these bone names without changing weapon clips.
+func _pose_arms(root: Node3D) -> void:
+	for skeleton: Skeleton3D in root.find_children("*", "Skeleton3D", true, false):
+		var bone := skeleton.find_bone("Forearm")
+		var end := skeleton.find_bone("ElbowEnd")
+		if bone < 0 or end < 0:
+			continue
+		var rest := skeleton.get_bone_rest(bone)
+		var length := skeleton.get_bone_rest(end).origin.length()
+		var side := -1.0 if "ArmL" in str(skeleton.get_path()) else 1.0
+		var elbow := loadout.player.camera.global_transform * Vector3(side * .25, -.42, -.10)
+		var direction := skeleton.to_local(elbow) - rest.origin
+		if direction.length() < .01 or length < .01:
+			continue
+		# Bone pose replaces the rest orientation in parent space.
+		# Preserve the sleeve's authored roll while swinging its long axis toward the elbow.
+		var rest_rotation := rest.basis.get_rotation_quaternion()
+		var swing := Quaternion(rest.basis.y.normalized(), direction.normalized())
+		# Reload sockets can travel far below the gun. Limit wrist deviation and arm stretch
+		# rather than forcing an anatomical joint to reach a fixed, invisible elbow.
+		var angle := rest.basis.y.angle_to(direction)
+		if angle > deg_to_rad(55.0):
+			swing = Quaternion.IDENTITY.slerp(swing, deg_to_rad(55.0) / angle)
+		skeleton.set_bone_pose_rotation(bone, swing * rest_rotation)
+		skeleton.set_bone_pose_scale(bone, Vector3(1, clampf(direction.length() / length, .85, 1.2), 1))
+
+
+## Draw cached held models under the loading cover, preserving the active item's visibility.
+func begin_graphics_warmup() -> Array:
+	set_process(false)
+	var saved := []
+	for key in ["ordinary", "heavy", "service_rifle"]:
+		var root: Node3D = _item(key).root
+		saved.append([root, root.visible])
+		root.visible = true
+	return saved
+
+
+func end_graphics_warmup(saved: Array) -> void:
+	for entry: Array in saved:
+		(entry[0] as Node3D).visible = entry[1]
+	set_process(true)

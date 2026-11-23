@@ -7,6 +7,8 @@ Do not read the full roadmap, every reference or future session. This file can s
 
 Prerequisite: The acceptance checks for [08-economy-reinforcement.md](./08-economy-reinforcement.md) must pass; use PROJECT.md for results rather than rereading that session.
 
+Sequence addition (user, November 16): [Session 09.5 — Lightwell](09.5-lightwell-map.md) now holds the detailed plan for the selected map direction. This session establishes representative polish on the existing demo; the dedicated Lightwell footprint, full wall-coverage work and final-map acceptance belong to 09.5 before private release. Creating that plan does not advance the active session or accept this one.
+
 ## Work and acceptance
 
 1. Polish the actual networked corridor first: movement, aim/recoil, step timing, hit/death feedback, breach warnings and voice/effects mix. Fix readability before decorating.
@@ -20,4 +22,4 @@ Prerequisite: The acceptance checks for [08-economy-reinforcement.md](./08-econo
 
 ## Finish the session
 
-Run relevant available checks; clearly separate verified results from checks requiring human playtesting. Update PROJECT.md with current state, known issues and the next task. After acceptance passes, set the active/next session in PROJECT.md to [10-private-release.md](10-private-release.md). If blocked or manual checks are pending, keep this session active and record exactly what remains. No separate status board or handoff document.
+Run relevant available checks; clearly separate verified results from checks requiring human playtesting. Update PROJECT.md with current state, known issues and the next task. After acceptance passes, set the active/next session in PROJECT.md to [09.5-lightwell-map.md](09.5-lightwell-map.md). If blocked or manual checks are pending, keep this session active and record exactly what remains. No separate status board or handoff document.

@@ -197,7 +197,7 @@ def tube_dot(A, P, y, zr):
     L = A.part("SightGlass")
     L.lathe("glass_lens", [(0, 0.0), (0.0003, ri)], 'Y', at=(0, y + 0.06, zc), segs=20)
     R = A.part("Reticle")
-    R.lathe("reticle", [(0, 0.0), (0.0001, 0.00045)], 'Y', at=(0, y + 0.058, zc), segs=10)
+    R.lathe("reticle", [(0, 0.0), (0.0001, 0.0009)], 'Y', at=(0, y + 0.058, zc), segs=10)
     A.socket("Sight", (0, y, zc))
     return zc
 
@@ -373,7 +373,7 @@ def smg():
     L = A.part("SightGlass")
     L.box("glass_lens", (0.024, 0.001, 0.024), (0, y + 0.041, zc), bevel=0)
     R = A.part("Reticle")
-    R.lathe("reticle", [(0, 0.0), (0.0001, 0.0005)], 'Y', at=(0, y + 0.0395, zc), segs=10)
+    R.lathe("reticle", [(0, 0.0), (0.0001, 0.0009)], 'Y', at=(0, y + 0.0395, zc), segs=10)
     A.socket("Sight", (0, y + 0.01, zc))
     B = A.part("Bolt", pivot=(0.011, 0.125, 0.006))
     B.box(BARE, (0.012, 0.075, 0.015), (0.0125, 0.135, 0.006), bevel=0.001, segs=1)
@@ -427,7 +427,7 @@ def pistol(name, match=False):
         Lp = A.part("SightGlass", parent="Slide")
         Lp.box("glass_lens", (0.0215, 0.001, 0.02), (0, 0.010, zt + 0.0155), bevel=0)
         R = A.part("Reticle", parent="Slide")
-        R.lathe("reticle", [(0, 0.0), (0.0001, 0.00055)], 'Y', at=(0, 0.0088, zt + 0.0155), segs=10)
+        R.lathe("reticle", [(0, 0.0), (0.0001, 0.0008)], 'Y', at=(0, 0.0088, zt + 0.0155), segs=10)
         A.socket("Sight", (0, -0.02, zt + 0.0155), parent="Slide")
         S.box(STEEL, (0.0035, 0.007, 0.004), (0, L - 0.008, zt + 0.0018), bevel=0.0008, segs=1)
     else:
